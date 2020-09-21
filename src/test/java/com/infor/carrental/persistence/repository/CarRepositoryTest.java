@@ -1,5 +1,6 @@
 package com.infor.carrental.persistence.repository;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.infor.carrental.Application;
@@ -21,8 +22,10 @@ class CarRepositoryTest {
     @Test
     void givenCarRepositoryWhenSaveAndRetrieveCarEntityThenExactMatch() {
         Car entity = new Car();
+        entity.setNumberPlate("ABC-123");
         Car savedCar = repository.save(entity);
         Optional<Car> retrievedCar = repository.findById(savedCar.getId());
         assertTrue(retrievedCar.isPresent());
+        assertEquals("ABC-123", retrievedCar.get().getNumberPlate());
     }
 }
