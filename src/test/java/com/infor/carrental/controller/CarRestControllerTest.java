@@ -1,9 +1,12 @@
 package com.infor.carrental.controller;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +45,18 @@ public class CarRestControllerTest {
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].numberPlate", CoreMatchers.is("ABC-123")));
+            .andExpect(jsonPath("$[0].numberPlate", is("ABC-123")));
+    }
+
+    @Test
+    void givenCarServiceWhenRegisterCarsThenReturnRegisteredCar() throws Exception {
+        Car car = new Car();
+        car.setNumberPlate("ABC-123");
+        given(carRepository.save(any(Car.class))).willReturn(car);
+        mvc.perform(post("/car/register")
+            .content("{\"id\":null,\"numberPlate\":\"ABC-123\"}")
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.numberPlate", is("ABC-123")));
     }
 }
