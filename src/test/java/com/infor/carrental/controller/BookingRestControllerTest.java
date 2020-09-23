@@ -50,4 +50,23 @@ public class BookingRestControllerTest {
             .andExpect(jsonPath("$[0].toDate", is(date.toString())))
         ;
     }
+
+    @Test
+    void givenBookingServiceWhenCheckBookingThenReturnTrue() throws Exception {
+        Booking booking = new Booking();
+        LocalDateTime date = now();
+        booking.setFromDate(date);
+        booking.setToDate(date);
+        List<Booking> bookings = Collections.singletonList(booking);
+        given(bookingRepository.findAll()).willReturn(bookings);
+        mvc.perform(get(
+            "/booking/check/from/2020-03-01T13:00/to/2020-03-01T13:00"
+        )
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].fromDate", is(date.toString())))
+            .andExpect(jsonPath("$[0].toDate", is(date.toString())))
+        ;
+    }
 }
