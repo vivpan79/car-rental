@@ -50,4 +50,23 @@ public class AvailabilityRestControllerTest {
             .andExpect(jsonPath("$[0].toDate", is(date.toString())))
         ;
     }
+
+    @Test
+    void givenAvailabilityServiceWhenCheckAvailabilityThenReturnTrue() throws Exception {
+        Availability availability = new Availability();
+        LocalDateTime date = now();
+        availability.setFromDate(date);
+        availability.setToDate(date);
+        List<Availability> availabilitys = Collections.singletonList(availability);
+        given(availabilityRepository.findAll()).willReturn(availabilitys);
+        mvc.perform(get(
+            "/availability/check/from/2020-03-01T13:00/to/2020-03-01T13:00"
+        )
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].fromDate", is(date.toString())))
+            .andExpect(jsonPath("$[0].toDate", is(date.toString())))
+        ;
+    }
 }
