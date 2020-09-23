@@ -8,19 +8,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/customer")
+@RestController
+@RequestMapping("customer")
 public class CustomerController {
 
     @Autowired
-    private CustomerRepository repository;
+    private CustomerRepository customerRepository;
 
-    @RequestMapping("/")
-    public String welcome() {
-        return "Welcome to Telenor's take-home assignment: Dynamic Query";
-    }
-
-    @GetMapping("/")
-    public List<Customer> getAll(){
-        return repository.findAll();
+    @GetMapping
+    public List<Customer> getAll() {
+        return customerRepository.findAll();
     }
 }

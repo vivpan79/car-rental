@@ -17,14 +17,14 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class CarRepositoryTest {
 
     @Autowired
-    private CarRepository repository;
+    private CarRepository carRepository;
 
     @Test
     void givenCarRepositoryWhenSaveAndRetrieveCarEntityThenExactMatch() {
         Car entity = new Car();
         entity.setNumberPlate("ABC-123");
-        Car savedCar = repository.save(entity);
-        Optional<Car> retrievedCar = repository.findById(savedCar.getId());
+        Car savedCar = carRepository.save(entity);
+        Optional<Car> retrievedCar = carRepository.findById(savedCar.getId());
         assertTrue(retrievedCar.isPresent());
         assertEquals("ABC-123", retrievedCar.get().getNumberPlate());
     }

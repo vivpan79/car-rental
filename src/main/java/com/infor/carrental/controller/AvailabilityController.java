@@ -5,16 +5,18 @@ import com.infor.carrental.persistence.repository.AvailabilityRepository;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("availability")
 public class AvailabilityController {
 
     @Autowired
-    private AvailabilityRepository repository;
+    private AvailabilityRepository availabilityRepository;
 
-    @GetMapping("/")
+    @GetMapping
     public List<Availability> getAll(){
-        return repository.findAll();
+        return availabilityRepository.findAll();
     }
 }

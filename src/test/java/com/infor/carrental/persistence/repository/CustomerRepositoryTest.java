@@ -16,13 +16,13 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 class CustomerRepositoryTest {
 
     @Autowired
-    private CustomerRepository repository;
+    private CustomerRepository customerRepository;
 
     @Test
     void givenCustomerRepositoryWhenSaveAndRetrieveCustomerEntityThenExactMatch() {
         Customer entity = new Customer();
-        Customer savedCustomer = repository.save(entity);
-        Optional<Customer> retrievedCustomer = repository.findById(savedCustomer.getId());
+        Customer savedCustomer = customerRepository.save(entity);
+        Optional<Customer> retrievedCustomer = customerRepository.findById(savedCustomer.getId());
         assertTrue(retrievedCustomer.isPresent());
     }
 }
