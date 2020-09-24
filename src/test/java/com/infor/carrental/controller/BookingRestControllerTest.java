@@ -1,8 +1,12 @@
 package com.infor.carrental.controller;
 
+import static java.lang.Boolean.TRUE;
 import static java.time.LocalDateTime.now;
+import static java.time.format.DateTimeFormatter.ofPattern;
+import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -10,9 +14,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.infor.carrental.persistence.entity.Booking;
-import com.infor.carrental.persistence.repository.BookingRepository;
+import com.infor.carrental.service.BookingService;
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,7 +36,7 @@ public class BookingRestControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private BookingRepository bookingRepository;
+    private BookingService bookingService;
 
     @Test
     void givenBookingServiceWhenGetBookingsThenReturnJsonArray() throws Exception {
@@ -40,8 +44,8 @@ public class BookingRestControllerTest {
         LocalDateTime date = now();
         booking.setFromDate(date);
         booking.setToDate(date);
-        List<Booking> bookings = Collections.singletonList(booking);
-        given(bookingRepository.findAll()).willReturn(bookings);
+        List<Booking> bookings = singletonList(booking);
+        given(bookingService.findAll()).willReturn(bookings);
         mvc.perform(get("/booking")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -53,20 +57,15 @@ public class BookingRestControllerTest {
 
     @Test
     void givenBookingServiceWhenCheckBookingThenReturnTrue() throws Exception {
-        Booking booking = new Booking();
         LocalDateTime date = now();
-        booking.setFromDate(date);
-        booking.setToDate(date);
-        List<Booking> bookings = Collections.singletonList(booking);
-        given(bookingRepository.findAll()).willReturn(bookings);
+        DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
+        given(bookingService.isAvailable(any(LocalDateTime.class), any(LocalDateTime.class))).willReturn(TRUE);
         mvc.perform(get(
-            "/booking/check/from/2020-03-01T13:00/to/2020-03-01T13:00"
+            "/booking/check/from/" + formatter.format(date) + "/to/" + formatter.format(date)
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].fromDate", is(date.toString())))
-            .andExpect(jsonPath("$[0].toDate", is(date.toString())))
+            .andExpect(jsonPath("$", is(TRUE)))
         ;
     }
 }
