@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(CustomerController.class)
 @ActiveProfiles("dev")
-public class CustomerRestControllerTest {
+class CustomerRestControllerTest {
 
     @Autowired
     private MockMvc mvc;

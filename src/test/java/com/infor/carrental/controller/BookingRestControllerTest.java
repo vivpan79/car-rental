@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(BookingController.class)
 @ActiveProfiles("dev")
-public class BookingRestControllerTest {
+class BookingRestControllerTest {
 
     @Autowired
     private MockMvc mvc;

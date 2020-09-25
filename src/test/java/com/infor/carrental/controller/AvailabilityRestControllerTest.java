@@ -30,7 +30,7 @@ import org.springframework.test.web.servlet.MockMvc;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(AvailabilityController.class)
 @ActiveProfiles("dev")
-public class AvailabilityRestControllerTest {
+class AvailabilityRestControllerTest {
 
     @Autowired
     private MockMvc mvc;
