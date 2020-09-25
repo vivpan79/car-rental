@@ -27,6 +27,14 @@ public class AvailabilityController {
         return availabilityService.findAll();
     }
 
+    @GetMapping(value = "/car/{numberPlate}")
+    public List<Availability> getAvailability(
+        @PathVariable(name = "numberPlate") String numberPlate
+    ) {
+        LOGGER.info("get availability for car : {}", numberPlate);
+        return availabilityService.getAvailability(numberPlate);
+    }
+
     @GetMapping(value = "/check/from/{fromDate}/to/{toDate}")
     public Boolean checkAvailability(
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,

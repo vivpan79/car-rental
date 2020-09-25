@@ -6,6 +6,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,15 +40,15 @@ class AvailabilityRestControllerTest {
     private AvailabilityService availabilityService;
 
     @Test
-    void givenAvailabilityServiceWhenGetAvailabilityThenReturnJsonArray() throws Exception {
+    void givenAvailabilityServiceWhenGetAvailabilityForCarThenReturnJsonArray() throws Exception {
         Availability availability = new Availability();
         LocalDateTime date = now();
         availability.setFromDate(date);
         availability.setToDate(date);
-        List<Availability> availabilitys = Collections.singletonList(availability);
-        given(availabilityService.findAll()).willReturn(availabilitys);
+        List<Availability> availabilityList = Collections.singletonList(availability);
+        given(availabilityService.getAvailability(anyString())).willReturn(availabilityList);
 
-        mvc.perform(get("/availability")
+        mvc.perform(get("/availability/car/ABC123")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))

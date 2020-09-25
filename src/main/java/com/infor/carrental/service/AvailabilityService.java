@@ -28,4 +28,12 @@ public class AvailabilityService {
     public List<Availability> findAll() {
         return availabilityRepository.findAll();
     }
+
+    public List<Availability> getAvailability(String numberPlate) {
+        return availabilityRepository.findByCarNumberPlate(numberPlate);
+    }
+
+    public Availability save(Availability availability) {
+        return availabilityRepository.save(availability);
+    }
 }
