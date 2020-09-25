@@ -18,10 +18,10 @@ public class AvailabilityService {
     @Autowired
     private AvailabilityRepository availabilityRepository;
 
-    public Boolean isAvailable(LocalDateTime fromDate, LocalDateTime toDate) {
+    public Boolean isAvailable(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
         Optional<Availability> availabilities = availabilityRepository
             .findOptionalByFromDateLessThanEqualAndToDateGreaterThanEqual(fromDate, toDate);
-        logger.info("Availability fromDate: {} toDate: {} ", fromDate, toDate);
+        logger.info("Availability of {} fromDate: {} toDate: {} ", carNumberPlate, fromDate, toDate);
         return availabilities.isPresent();
     }
 

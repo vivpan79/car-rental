@@ -35,12 +35,13 @@ public class AvailabilityController {
         return availabilityService.getAvailability(numberPlate);
     }
 
-    @GetMapping(value = "/check/from/{fromDate}/to/{toDate}")
+    @GetMapping(value = "/car/{numberPlate}/check/from/{fromDate}/to/{toDate}")
     public Boolean checkAvailability(
+        @PathVariable(name = "numberPlate") String numberPlate,
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
         @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate
     ) {
-        LOGGER.info("Checking availability fromDate: {} toDate: {} ", fromDate, toDate);
-        return availabilityService.isAvailable(fromDate, toDate);
+        LOGGER.info("Checking availability of {} fromDate: {} toDate: {} ", numberPlate, fromDate, toDate);
+        return availabilityService.isAvailable(numberPlate, fromDate, toDate);
     }
 }
