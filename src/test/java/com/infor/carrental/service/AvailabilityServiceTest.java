@@ -3,6 +3,7 @@ package com.infor.carrental.service;
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.infor.carrental.Application;
 import com.infor.carrental.persistence.entity.Availability;
@@ -37,11 +38,28 @@ class AvailabilityServiceTest {
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
         availability.setCar(savedCar);
-        Availability saved = availabilityService.save(availability);
+        availabilityService.save(availability);
 
         List<Availability> availabilityList = availabilityService.getAvailability("ABC123");
 
         assertNotNull(availabilityList);
         assertEquals(1, availabilityList.size());
+    }
+
+    @Test
+    void givenAvailabilityServiceWhenCheckAvailabilityForCarThenReturnJsonArray() {
+        Availability availability = new Availability();
+        LocalDateTime now = now();
+        availability.setFromDate(now);
+        availability.setToDate(now.plusHours(1L));
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        Car savedCar = carRepository.save(car);
+        availability.setCar(savedCar);
+        availabilityService.save(availability);
+
+        Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusHours(1L));
+
+        assertTrue(isAvailable);
     }
 }

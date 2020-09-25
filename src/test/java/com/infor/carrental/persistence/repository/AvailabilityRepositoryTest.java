@@ -9,7 +9,6 @@ import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Car;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,11 +65,12 @@ class AvailabilityRepositoryTest {
         availability.setToDate(availabilityEnd);
         availabilityRepository.save(availability);
 
-        Optional<Availability> availabilities =
+        List<Availability> availabilities =
             availabilityRepository
-                .findOptionalByFromDateLessThanEqualAndToDateGreaterThanEqual(bookingStart, bookingEnd);
-        assertTrue(availabilities.isPresent());
-        assertEquals("ABC-123", availabilities.get().getCar().getNumberPlate());
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-123", bookingStart,
+                    bookingEnd);
+        assertFalse(availabilities.isEmpty());
+        assertEquals("ABC-123", availabilities.get(0).getCar().getNumberPlate());
         availabilityRepository.deleteAll();
     }
 
@@ -90,12 +90,13 @@ class AvailabilityRepositoryTest {
         availability.setToDate(availabilityEnd);
         availabilityRepository.save(availability);
 
-        Optional<Availability> availabilities =
+        List<Availability> availabilities =
             availabilityRepository
-                .findOptionalByFromDateLessThanEqualAndToDateGreaterThanEqual(bookingStart, bookingEnd);
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-123", bookingStart,
+                    bookingEnd);
 
-        assertTrue(availabilities.isPresent());
-        assertEquals("ABC-123", availabilities.get().getCar().getNumberPlate());
+        assertFalse(availabilities.isEmpty());
+        assertEquals("ABC-123", availabilities.get(0).getCar().getNumberPlate());
         availabilityRepository.deleteAll();
     }
 
@@ -115,11 +116,12 @@ class AvailabilityRepositoryTest {
         availability.setToDate(availabilityEnd);
         availabilityRepository.save(availability);
 
-        Optional<Availability> availabilities =
+        List<Availability> availabilities =
             availabilityRepository
-                .findOptionalByFromDateLessThanEqualAndToDateGreaterThanEqual(bookingStart, bookingEnd);
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-123", bookingStart,
+                    bookingEnd);
 
-        assertFalse(availabilities.isPresent());
+        assertTrue(availabilities.isEmpty());
         availabilityRepository.deleteAll();
     }
 
@@ -139,11 +141,12 @@ class AvailabilityRepositoryTest {
         availability.setToDate(availabilityEnd);
         availabilityRepository.save(availability);
 
-        Optional<Availability> availabilities =
+        List<Availability> availabilities =
             availabilityRepository
-                .findOptionalByFromDateLessThanEqualAndToDateGreaterThanEqual(bookingStart, bookingEnd);
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-123", bookingStart,
+                    bookingEnd);
 
-        assertFalse(availabilities.isPresent());
+        assertTrue(availabilities.isEmpty());
         availabilityRepository.deleteAll();
     }
 

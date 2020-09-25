@@ -4,7 +4,6 @@ import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.repository.AvailabilityRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +18,10 @@ public class AvailabilityService {
     private AvailabilityRepository availabilityRepository;
 
     public Boolean isAvailable(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
-        Optional<Availability> availabilities = availabilityRepository
-            .findOptionalByFromDateLessThanEqualAndToDateGreaterThanEqual(fromDate, toDate);
+        List<Availability> availabilities = availabilityRepository
+            .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual(carNumberPlate, fromDate, toDate);
         logger.info("Availability of {} fromDate: {} toDate: {} ", carNumberPlate, fromDate, toDate);
-        return availabilities.isPresent();
+        return !availabilities.isEmpty();
     }
 
     public List<Availability> findAll() {

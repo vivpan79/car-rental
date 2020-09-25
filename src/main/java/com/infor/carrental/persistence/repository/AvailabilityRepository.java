@@ -17,6 +17,11 @@ public interface AvailabilityRepository extends JpaRepository<Availability, Long
     Optional<Availability> findOptionalByFromDateLessThanEqualAndToDateGreaterThanEqual(LocalDateTime fromDate,
         LocalDateTime toDate);
 
+    @Query(value = "FROM Availability AS a JOIN Car AS c ON a.car.id = c.id WHERE c.numberPlate = ?1 AND a.fromDate <= ?2 AND a.toDate >= ?3 ")
+    List<Availability> findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual(String numberPlate,
+        LocalDateTime fromDate,
+        LocalDateTime toDate);
+
     @Query(value = "FROM Availability AS a JOIN Car AS c ON a.car.id = c.id WHERE c.numberPlate = ?1")
     List<Availability> findByCarNumberPlate(String numberPlate);
 }
