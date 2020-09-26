@@ -3,6 +3,7 @@ package com.infor.carrental.service;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import com.infor.carrental.Application;
+import com.infor.carrental.exception.AlreadyRegisteredUserException;
 import com.infor.carrental.persistence.entity.Customer;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,7 +28,7 @@ class CustomerServiceTest {
         customer.setPassword("Password");
         customerService.save(customer);
 
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(AlreadyRegisteredUserException.class, () -> {
             customerService.save(customer);
         });
     }

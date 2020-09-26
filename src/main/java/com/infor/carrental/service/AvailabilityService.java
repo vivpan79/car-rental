@@ -2,6 +2,7 @@ package com.infor.carrental.service;
 
 import static java.lang.String.format;
 
+import com.infor.carrental.exception.NoRegisteredCarException;
 import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.AvailabilityRepository;
@@ -44,7 +45,7 @@ public class AvailabilityService {
     public Availability registerAvailability(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
         Car savedCar = carService.findByNumberPlate(numberPlate);
         if (null == savedCar) {
-            throw new IllegalArgumentException(format("Car with numberPlate %s does not exist", numberPlate));
+            throw new NoRegisteredCarException(format("Car with numberPlate %s does not exist", numberPlate));
         }
         Availability availability = new Availability();
         availability.setFromDate(fromDate);

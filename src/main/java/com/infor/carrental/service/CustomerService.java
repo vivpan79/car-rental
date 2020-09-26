@@ -2,6 +2,7 @@ package com.infor.carrental.service;
 
 import static java.lang.String.format;
 
+import com.infor.carrental.exception.AlreadyRegisteredUserException;
 import com.infor.carrental.persistence.entity.Customer;
 import com.infor.carrental.persistence.repository.CustomerRepository;
 import java.util.List;
@@ -20,7 +21,8 @@ public class CustomerService {
 
     public Customer save(Customer customer) {
         if (userExits(customer.getUserName())) {
-            throw new IllegalArgumentException(format("User with username %s already exists", customer.getUserName()));
+            throw new AlreadyRegisteredUserException(
+                format("User with username %s already exists", customer.getUserName()));
         }
         return repository.save(customer);
     }

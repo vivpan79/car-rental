@@ -8,6 +8,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.infor.carrental.Application;
+import com.infor.carrental.exception.AlreadyBookedException;
+import com.infor.carrental.exception.NoAvailabilityException;
 import com.infor.carrental.persistence.entity.Booking;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.CarRepository;
@@ -119,7 +121,7 @@ class BookingServiceTest {
     }
 
     @Test
-    void givenBookingServiceWhenRegisterBookingForUnavailableCarThenException() {
+    void givenBookingServiceWhenRegisterBookingForAlreadyBookedCarThenException() {
         Booking booking = new Booking();
         LocalDateTime now = now();
         booking.setFromDate(now);
@@ -130,7 +132,13 @@ class BookingServiceTest {
         booking.setCar(savedCar);
         bookingService.save(booking);
 
-        assertThrows(IllegalArgumentException.class, () -> bookingService.registerBooking("ABC123", now, now));
+        assertThrows(AlreadyBookedException.class, () -> bookingService.registerBooking("ABC123", now, now));
+    }
+
+    @Test
+    void givenBookingServiceWhenRegisterBookingForUnavailableCarThenException() {
+        LocalDateTime now = now();
+        assertThrows(NoAvailabilityException.class, () -> bookingService.registerBooking("ABC123", now, now));
     }
 
     @AfterEach

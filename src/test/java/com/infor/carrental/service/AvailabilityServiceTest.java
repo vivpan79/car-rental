@@ -8,11 +8,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.infor.carrental.Application;
+import com.infor.carrental.exception.NoRegisteredCarException;
 import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.CarRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,8 +48,6 @@ class AvailabilityServiceTest {
 
         assertNotNull(availabilityList);
         assertEquals(1, availabilityList.size());
-        availabilityService.deleteAll();
-        carRepository.deleteAll();
     }
 
     @Test
@@ -65,8 +65,6 @@ class AvailabilityServiceTest {
         Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusHours(1L));
 
         assertTrue(isAvailable);
-        availabilityService.deleteAll();
-        carRepository.deleteAll();
     }
 
     @Test
@@ -85,8 +83,6 @@ class AvailabilityServiceTest {
             .isAvailable("ABC123", now.plusMinutes(20L), now.plusHours(1L).minusMinutes(10L));
 
         assertTrue(isAvailable);
-        availabilityService.deleteAll();
-        carRepository.deleteAll();
     }
 
     @Test
@@ -104,8 +100,6 @@ class AvailabilityServiceTest {
         Boolean isAvailable = availabilityService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L));
 
         assertFalse(isAvailable);
-        availabilityService.deleteAll();
-        carRepository.deleteAll();
     }
 
     @Test
@@ -123,15 +117,19 @@ class AvailabilityServiceTest {
         Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusMinutes(61L));
 
         assertFalse(isAvailable);
-        availabilityService.deleteAll();
-        carRepository.deleteAll();
     }
 
     @Test
     void givenAvailabilityServiceWhenRegisterAvailabilityForMissingCarThenException() {
         LocalDateTime now = now();
-        assertThrows(IllegalArgumentException.class, () -> {
+        assertThrows(NoRegisteredCarException.class, () -> {
             availabilityService.registerAvailability("ABC123", now, now);
         });
+    }
+
+    @AfterEach
+    void tearDown() {
+        availabilityService.deleteAll();
+        carRepository.deleteAll();
     }
 }
