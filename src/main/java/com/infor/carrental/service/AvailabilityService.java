@@ -8,6 +8,7 @@ import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.AvailabilityRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +67,12 @@ public class AvailabilityService {
 
     public boolean isAvailable(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
         return isAvailable(numberPlate, fromDate, toDate, Long.MAX_VALUE);
+    }
+
+    public List<Car> findAvailableCars(LocalDateTime fromDate, LocalDateTime toDate, Long maxPricePerHour) {
+        List<Availability> availabilityList = availabilityRepository
+            .findCarByFromDateLessThanEqualAndToDateGreaterThanEqualAndLessThanEqualPricePerHour(fromDate, toDate,
+                maxPricePerHour);
+        return availabilityList.stream().map(Availability::getCar).collect(Collectors.toList());
     }
 }

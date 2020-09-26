@@ -1,6 +1,7 @@
 package com.infor.carrental.controller;
 
 import com.infor.carrental.persistence.entity.Availability;
+import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.service.AvailabilityService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -47,6 +48,18 @@ public class AvailabilityController {
             .info("Checking availability of {} fromDate: {} toDate: {} at maxPricePerHour: {} ", numberPlate, fromDate,
                 toDate, maxPricePerHour);
         return availabilityService.isAvailable(numberPlate, fromDate, toDate, maxPricePerHour);
+    }
+
+    @GetMapping(value = "/check/from/{fromDate}/to/{toDate}/maxrate/{maxPricePerHour}")
+    public List<Car> findAvailableCars(
+        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate,
+        @PathVariable(name = "maxPricePerHour") Long maxPricePerHour
+    ) {
+        LOGGER
+            .info("Find available cars fromDate: {} toDate: {} at maxPricePerHour: {} ", fromDate,
+                toDate, maxPricePerHour);
+        return availabilityService.findAvailableCars(fromDate, toDate, maxPricePerHour);
     }
 
     @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}/rate/{pricePerHour}")
