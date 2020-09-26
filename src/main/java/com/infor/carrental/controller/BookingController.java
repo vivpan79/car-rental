@@ -65,4 +65,22 @@ public class BookingController {
         LOGGER.info("find Booked Cars fromDate: {} toDate: {} ", fromDate, toDate);
         return bookingService.findBookedCars(fromDate, toDate);
     }
+
+    @GetMapping(value = "/frequency/from/{fromDate}/to/{toDate}")
+    public Double getCarBookingFrequency(
+        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate
+    ) {
+        LOGGER.info("find Car booking frequency fromDate: {} toDate: {} ", fromDate, toDate);
+        return bookingService.getCarBookingFrequency(fromDate, toDate);
+    }
+
+    @GetMapping(value = "/payments/from/{fromDate}/to/{toDate}")
+    public Double getCarBookingPayment(
+        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate
+    ) {
+        LOGGER.info("find payment from booked cars fromDate: {} toDate: {} ", fromDate, toDate);
+        return bookingService.paymentFromBookedCars(fromDate, toDate);
+    }
 }

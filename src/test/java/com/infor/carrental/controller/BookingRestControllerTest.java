@@ -110,4 +110,40 @@ class BookingRestControllerTest {
             .andExpect(jsonPath("$[0].numberPlate", is("ABC123")))
         ;
     }
+
+    @Test
+    void givenBookingServiceWhenGetCarBookingFrequencyThenReturnBookingFrequency() throws Exception {
+        LocalDateTime date = now();
+        DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
+        Booking booking = new Booking();
+        booking.setFromDate(date);
+        booking.setToDate(date);
+        given(bookingService.getCarBookingFrequency(any(LocalDateTime.class), any(LocalDateTime.class)))
+            .willReturn(0.314);
+        mvc.perform(get(
+            "/booking/frequency/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+        )
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", is(0.314)))
+        ;
+    }
+
+    @Test
+    void givenBookingServiceWhenGetPaymentFromBookedCarsThenReturnPayment() throws Exception {
+        LocalDateTime date = now();
+        DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
+        Booking booking = new Booking();
+        booking.setFromDate(date);
+        booking.setToDate(date);
+        given(bookingService.paymentFromBookedCars(any(LocalDateTime.class), any(LocalDateTime.class)))
+            .willReturn(123.45);
+        mvc.perform(get(
+            "/booking/payments/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+        )
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", is(123.45)))
+        ;
+    }
 }

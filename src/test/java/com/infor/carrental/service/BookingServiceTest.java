@@ -138,7 +138,56 @@ class BookingServiceTest {
     @Test
     void givenBookingServiceWhenRegisterBookingForUnavailableCarThenException() {
         LocalDateTime now = now();
+
         assertThrows(NoAvailabilityException.class, () -> bookingService.registerBooking("ABC123", now, now));
+    }
+
+    @Test
+    void givenBookingServiceWhenFindBookedHoursThenReturnBookedHours() {
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        Car savedCar = carRepository.save(car);
+        LocalDateTime now = now();
+        Booking booking = new Booking();
+        booking.setCar(savedCar);
+        booking.setFromDate(now);
+        booking.setToDate(now.plusHours(3));
+        bookingService.save(booking);
+        booking = new Booking();
+        booking.setCar(savedCar);
+        booking.setFromDate(now.plusMonths(1));
+        booking.setToDate(now.plusMonths(1).plusHours(7));
+        bookingService.save(booking);
+
+        Long bookedHours = bookingService.findBookedHours(now, now.plusMonths(2));
+
+        assertEquals(10, bookedHours);
+    }
+
+    @Test
+    void givenBookingServiceWhenPaymentFromBookedCarsThenReturnPayment() {
+    }
+
+    @Test
+    void givenBookingServiceWhenGetCarBookingFrequencyThenReturnBookingFrequencyT() {
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        Car savedCar = carRepository.save(car);
+        LocalDateTime now = now();
+        Booking booking = new Booking();
+        booking.setCar(savedCar);
+        booking.setFromDate(now);
+        booking.setToDate(now.plusHours(3));
+        bookingService.save(booking);
+        booking = new Booking();
+        booking.setCar(savedCar);
+        booking.setFromDate(now.plusMonths(1));
+        booking.setToDate(now.plusMonths(1).plusHours(7));
+        bookingService.save(booking);
+
+        Double carBookingFrequency = bookingService.getCarBookingFrequency(now, now.plusMonths(2));
+
+        assertEquals(0.2, carBookingFrequency);
     }
 
     @AfterEach

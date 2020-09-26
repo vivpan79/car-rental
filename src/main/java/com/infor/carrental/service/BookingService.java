@@ -8,6 +8,7 @@ import com.infor.carrental.persistence.entity.Booking;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.BookingRepository;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.slf4j.Logger;
@@ -65,5 +66,23 @@ public class BookingService {
     public List<Car> findBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
         List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
         return bookings.stream().map(Booking::getCar).collect(Collectors.toList());
+    }
+
+    public Long findBookedHours(LocalDateTime fromDate, LocalDateTime toDate) {
+        List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
+        return bookings.stream().map(x -> LocalDateTime.from(x.getFromDate()).until(x.getToDate(), ChronoUnit.HOURS))
+            .mapToLong(Long::longValue).sum();
+    }
+
+    public Double getCarBookingFrequency(LocalDateTime fromDate, LocalDateTime toDate) {
+        long totalCarsBooked = findBookedCars(fromDate, toDate).size();
+        long totalBookedHours = findBookedHours(fromDate, toDate);
+        return ((double) totalCarsBooked / totalBookedHours);
+    }
+
+    public Double paymentFromBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
+        long totalCarsBooked = findBookedCars(fromDate, toDate).size();
+        long totalBookedHours = findBookedHours(fromDate, toDate);
+        return ((double) totalCarsBooked / totalBookedHours);
     }
 }
