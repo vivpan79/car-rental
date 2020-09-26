@@ -63,11 +63,13 @@ class AvailabilityRestControllerTest {
     void givenAvailabilityServiceWhenCheckAvailabilityForCarThenReturnTrue() throws Exception {
         LocalDateTime date = now();
         DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
-        given(availabilityService.isAvailable(anyString(), any(LocalDateTime.class), any(LocalDateTime.class)))
+        given(availabilityService.isAvailable(anyString(), any(LocalDateTime.class), any(LocalDateTime.class),
+            anyLong()))
             .willReturn(TRUE);
 
         mvc.perform(get(
             "/availability/car/ABC123/check/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+                + "/maxrate/100"
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())

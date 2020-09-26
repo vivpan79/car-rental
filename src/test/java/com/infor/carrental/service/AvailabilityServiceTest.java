@@ -56,13 +56,14 @@ class AvailabilityServiceTest {
         LocalDateTime now = now();
         availability.setFromDate(now);
         availability.setToDate(now.plusHours(1L));
+        availability.setPricePerHour(Long.MAX_VALUE);
         Car car = new Car();
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
-        Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusHours(1L));
+        Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusHours(1L), Long.MAX_VALUE);
 
         assertTrue(isAvailable);
     }
@@ -73,6 +74,7 @@ class AvailabilityServiceTest {
         LocalDateTime now = now();
         availability.setFromDate(now);
         availability.setToDate(now.plusHours(1L));
+        availability.setPricePerHour(Long.MAX_VALUE);
         Car car = new Car();
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
@@ -80,7 +82,7 @@ class AvailabilityServiceTest {
         availabilityService.save(availability);
 
         Boolean isAvailable = availabilityService
-            .isAvailable("ABC123", now.plusMinutes(20L), now.plusHours(1L).minusMinutes(10L));
+            .isAvailable("ABC123", now.plusMinutes(20L), now.plusHours(1L).minusMinutes(10L), Long.MAX_VALUE);
 
         assertTrue(isAvailable);
     }
@@ -97,7 +99,8 @@ class AvailabilityServiceTest {
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
-        Boolean isAvailable = availabilityService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L));
+        Boolean isAvailable = availabilityService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L),
+            Long.MAX_VALUE);
 
         assertFalse(isAvailable);
     }
@@ -114,7 +117,7 @@ class AvailabilityServiceTest {
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
-        Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusMinutes(61L));
+        Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusMinutes(61L), Long.MAX_VALUE);
 
         assertFalse(isAvailable);
     }
@@ -122,9 +125,7 @@ class AvailabilityServiceTest {
     @Test
     void givenAvailabilityServiceWhenRegisterAvailabilityForMissingCarThenException() {
         LocalDateTime now = now();
-        assertThrows(NoRegisteredCarException.class, () -> {
-            availabilityService.registerAvailability("ABC123", now, now, 100L);
-        });
+        assertThrows(NoRegisteredCarException.class, () -> availabilityService.registerAvailability("ABC123", now, now, 100L));
     }
 
     @AfterEach

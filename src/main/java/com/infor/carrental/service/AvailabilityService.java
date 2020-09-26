@@ -23,10 +23,14 @@ public class AvailabilityService {
     @Autowired
     private CarService carService;
 
-    public Boolean isAvailable(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
+    public Boolean isAvailable(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate,
+        Long maxPricePerHour) {
         List<Availability> availabilities = availabilityRepository
-            .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual(carNumberPlate, fromDate, toDate);
-        logger.info("Availability of {} fromDate: {} toDate: {} ", carNumberPlate, fromDate, toDate);
+            .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual(carNumberPlate, fromDate, toDate,
+                maxPricePerHour);
+        logger
+            .info("Availability of {} fromDate: {} toDate: {} at maxPricePerHour: {}", carNumberPlate, fromDate, toDate,
+                maxPricePerHour);
         return !availabilities.isEmpty();
     }
 
@@ -58,5 +62,9 @@ public class AvailabilityService {
 
     public void deleteAll() {
         availabilityRepository.deleteAll();
+    }
+
+    public boolean isAvailable(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
+        return isAvailable(numberPlate, fromDate, toDate, Long.MAX_VALUE);
     }
 }
