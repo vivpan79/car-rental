@@ -1,5 +1,6 @@
 package com.infor.carrental.controller;
 
+import com.infor.carrental.controller.model.RestCar;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.CarRepository;
 import java.util.List;
@@ -23,7 +24,8 @@ public class CarController {
     }
 
     @PostMapping("/register")
-    public Car registerCar(@RequestBody Car car){
-        return carRepository.save(car);
+    public RestCar registerCar(@RequestBody RestCar car){
+        Car savedCar = carRepository.save(car.toJpa());
+        return new RestCar(savedCar);
     }
 }
