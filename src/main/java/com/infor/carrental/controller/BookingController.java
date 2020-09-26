@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -43,5 +44,15 @@ public class BookingController {
     ) {
         LOGGER.info("Checking booking of {} fromDate: {} toDate: {} ", numberPlate, fromDate, toDate);
         return bookingService.isAvailable(numberPlate, fromDate, toDate);
+    }
+
+    @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}")
+    public Booking registerBooking(
+        @PathVariable(name = "numberPlate") String numberPlate,
+        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate
+    ) {
+        LOGGER.info("Register booking of {} fromDate: {} toDate: {} ", numberPlate, fromDate, toDate);
+        return bookingService.registerBooking(numberPlate, fromDate, toDate);
     }
 }

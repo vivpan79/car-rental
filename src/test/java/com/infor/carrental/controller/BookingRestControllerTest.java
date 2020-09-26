@@ -11,6 +11,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,13 +62,33 @@ class BookingRestControllerTest {
     void givenBookingServiceWhenCheckBookingThenReturnTrue() throws Exception {
         LocalDateTime date = now();
         DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
-        given(bookingService.isAvailable(anyString(), any(LocalDateTime.class), any(LocalDateTime.class))).willReturn(TRUE);
+        given(bookingService.isAvailable(anyString(), any(LocalDateTime.class), any(LocalDateTime.class)))
+            .willReturn(TRUE);
         mvc.perform(get(
             "/booking/car/ABC123/check/from/" + formatter.format(date) + "/to/" + formatter.format(date)
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", is(TRUE)))
+        ;
+    }
+
+    @Test
+    void givenBookingServiceWhenRegisterBookingThenReturnTrue() throws Exception {
+        LocalDateTime date = now();
+        DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
+        Booking booking = new Booking();
+        booking.setFromDate(date);
+        booking.setToDate(date);
+        given(bookingService.registerBooking(anyString(), any(LocalDateTime.class), any(LocalDateTime.class)))
+            .willReturn(booking);
+        mvc.perform(post(
+            "/booking/car/ABC123/register/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+        )
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.fromDate", is(date.toString())))
+            .andExpect(jsonPath("$.toDate", is(date.toString())))
         ;
     }
 }

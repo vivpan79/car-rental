@@ -1,7 +1,8 @@
 package com.infor.carrental.service;
 
+import static java.lang.String.format;
+
 import com.infor.carrental.persistence.entity.Booking;
-import com.infor.carrental.persistence.repository.AvailabilityRepository;
 import com.infor.carrental.persistence.repository.BookingRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,7 +19,7 @@ public class BookingService {
     @Autowired
     private BookingRepository bookingRepository;
     @Autowired
-    private AvailabilityRepository availabilityRepository;
+    private AvailabilityService availabilityService;
 
     public List<Booking> findAll() {
         return bookingRepository.findAll();
@@ -42,5 +43,15 @@ public class BookingService {
 
     public void deleteAll() {
         bookingRepository.deleteAll();
+    }
+
+    public Booking registerBooking(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
+        if (!isAvailable(numberPlate, fromDate, toDate)) {
+            throw new IllegalArgumentException(format("Car with numberPlate %s already booked", numberPlate));
+        }
+        Booking entity = new Booking();
+        entity.setFromDate(fromDate);
+        entity.setToDate(toDate);
+        return bookingRepository.save(entity);
     }
 }

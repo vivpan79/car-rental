@@ -4,6 +4,7 @@ import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.infor.carrental.Application;
@@ -12,6 +13,7 @@ import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.CarRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +64,6 @@ class BookingServiceTest {
         Boolean isAvailable = bookingService.isAvailable("ABC123", now, now.plusHours(1L));
 
         assertFalse(isAvailable);
-        bookingService.deleteAll();
     }
 
     @Test
@@ -81,7 +82,6 @@ class BookingServiceTest {
             .isAvailable("ABC123", now.plusMinutes(20L), now.plusHours(1L).minusMinutes(10L));
 
         assertTrue(isAvailable);
-        bookingService.deleteAll();
     }
 
     @Test
@@ -99,7 +99,6 @@ class BookingServiceTest {
         Boolean isAvailable = bookingService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L));
 
         assertFalse(isAvailable);
-        bookingService.deleteAll();
     }
 
     @Test
@@ -117,6 +116,26 @@ class BookingServiceTest {
         Boolean isAvailable = bookingService.isAvailable("ABC123", now, now.plusMinutes(61L));
 
         assertFalse(isAvailable);
+    }
+
+    @Test
+    void givenBookingServiceWhenRegisterBookingForUnavailableCarThenException() {
+        Booking booking = new Booking();
+        LocalDateTime now = now();
+        booking.setFromDate(now);
+        booking.setToDate(now);
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        Car savedCar = carRepository.save(car);
+        booking.setCar(savedCar);
+        bookingService.save(booking);
+
+        assertThrows(IllegalArgumentException.class, () -> bookingService.registerBooking("ABC123", now, now));
+    }
+
+    @AfterEach
+    void tearDown() {
         bookingService.deleteAll();
+        carRepository.deleteAll();
     }
 }
