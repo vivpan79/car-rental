@@ -5,9 +5,11 @@ import static java.lang.String.format;
 import com.infor.carrental.exception.AlreadyBookedException;
 import com.infor.carrental.exception.NoAvailabilityException;
 import com.infor.carrental.persistence.entity.Booking;
+import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.BookingRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,5 +60,10 @@ public class BookingService {
         entity.setFromDate(fromDate);
         entity.setToDate(toDate);
         return bookingRepository.save(entity);
+    }
+
+    public List<Car> findBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
+        List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
+        return bookings.stream().map(Booking::getCar).collect(Collectors.toList());
     }
 }

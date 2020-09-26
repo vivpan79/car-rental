@@ -112,7 +112,7 @@ class AvailabilityRestControllerTest {
             .willReturn(cars);
 
         mvc.perform(get(
-            "/availability/check/from/" + formatter.format(date) + "/to/" + formatter.format(date) + "/maxrate/100"
+            "/availability/find/from/" + formatter.format(date) + "/to/" + formatter.format(date) + "/maxrate/100"
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())

@@ -16,6 +16,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.infor.carrental.persistence.entity.Booking;
+import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.service.BookingService;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -89,6 +90,24 @@ class BookingRestControllerTest {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.fromDate", is(date.toString())))
             .andExpect(jsonPath("$.toDate", is(date.toString())))
+        ;
+    }
+
+    @Test
+    void givenBookingServiceWhenGetBookedCarsThenReturnJsonArray() throws Exception {
+        LocalDateTime date = now();
+        DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        List<Car> cars = singletonList(car);
+        given(bookingService.findBookedCars(any(LocalDateTime.class), any(LocalDateTime.class)))
+            .willReturn(cars);
+        mvc.perform(get(
+            "/booking/find/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+        )
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].numberPlate", is("ABC123")))
         ;
     }
 }

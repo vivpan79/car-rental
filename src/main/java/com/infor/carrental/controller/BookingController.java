@@ -1,6 +1,7 @@
 package com.infor.carrental.controller;
 
 import com.infor.carrental.persistence.entity.Booking;
+import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.service.BookingService;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -54,5 +55,14 @@ public class BookingController {
     ) {
         LOGGER.info("Register booking of {} fromDate: {} toDate: {} ", numberPlate, fromDate, toDate);
         return bookingService.registerBooking(numberPlate, fromDate, toDate);
+    }
+
+    @GetMapping(value = "/find/from/{fromDate}/to/{toDate}")
+    public List<Car> findBookedCars(
+        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate
+    ) {
+        LOGGER.info("find Booked Cars fromDate: {} toDate: {} ", fromDate, toDate);
+        return bookingService.findBookedCars(fromDate, toDate);
     }
 }

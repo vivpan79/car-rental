@@ -50,7 +50,7 @@ public class AvailabilityController {
         return availabilityService.isAvailable(numberPlate, fromDate, toDate, maxPricePerHour);
     }
 
-    @GetMapping(value = "/check/from/{fromDate}/to/{toDate}/maxrate/{maxPricePerHour}")
+    @GetMapping(value = "/find/from/{fromDate}/to/{toDate}/maxrate/{maxPricePerHour}")
     public List<Car> findAvailableCars(
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
         @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate,
