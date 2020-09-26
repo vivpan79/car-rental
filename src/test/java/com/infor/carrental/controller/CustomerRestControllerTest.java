@@ -1,12 +1,16 @@
 package com.infor.carrental.controller;
 
+import static java.util.Collections.singletonList;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infor.carrental.persistence.entity.Customer;
 import com.infor.carrental.persistence.repository.CustomerRepository;
 import java.util.Collections;
@@ -36,12 +40,27 @@ class CustomerRestControllerTest {
     void givenCustomerServiceWhenGetCustomersThenReturnJsonArray() throws Exception {
         Customer customer = new Customer();
         customer.setUserName("NewUser");
-        List<Customer> customers = Collections.singletonList(customer);
+        List<Customer> customers = singletonList(customer);
         given(customerRepository.findAll()).willReturn(customers);
         mvc.perform(get("/customer")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].userName", CoreMatchers.is("NewUser")));
+            .andExpect(jsonPath("$[0].userName", is("NewUser")));
+    }
+
+    @Test
+    void givenCustomerServiceWhenRegisterCustomersThenReturnJsonArray() throws Exception {
+        Customer customer = new Customer();
+        customer.setUserName("NewUser");
+        customer.setPassword("Password");
+        List<Customer> customers = singletonList(customer);
+        given(customerRepository.findAll()).willReturn(customers);
+        mvc.perform(post("/customer/register")
+            .content(new ObjectMapper().writeValueAsString(new RestCustomer(customer)))
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.userName", is("NewUser")))
+        ;
     }
 }

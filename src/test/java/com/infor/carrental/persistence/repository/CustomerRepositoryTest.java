@@ -28,4 +28,13 @@ class CustomerRepositoryTest {
         Optional<Customer> retrievedCustomer = customerRepository.findById(savedCustomer.getId());
         assertTrue(retrievedCustomer.isPresent());
     }
+
+    @Test
+    void givenCustomerRepositoryWhenSaveAndFindCustomerByUserNameThenExactMatch() {
+        Customer entity = new Customer();
+        entity.setUserName("CustomerOne");
+        Customer savedCustomer = customerRepository.save(entity);
+        Optional<Customer> retrievedCustomer = customerRepository.findByUserName(savedCustomer.getUserName());
+        assertTrue(retrievedCustomer.isPresent());
+    }
 }

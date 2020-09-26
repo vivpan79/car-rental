@@ -26,6 +26,9 @@ public abstract class User {
     @Column(name = "username")
     private String userName;
 
+    @Column(name = "password")
+    private String password;
+
     public Long getId() {
         return id;
     }
@@ -36,6 +39,10 @@ public abstract class User {
 
     public void setUserName(String userName) {
         this.userName = userName;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public abstract Boolean isAdmin();
