@@ -7,6 +7,7 @@ import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -39,14 +40,15 @@ class BookingRestControllerTest {
     private BookingService bookingService;
 
     @Test
-    void givenBookingServiceWhenGetBookingsThenReturnJsonArray() throws Exception {
+    void givenBookingServiceWhenGetBookingsForCarThenReturnJsonArray() throws Exception {
         Booking booking = new Booking();
         LocalDateTime date = now();
         booking.setFromDate(date);
         booking.setToDate(date);
         List<Booking> bookings = singletonList(booking);
-        given(bookingService.findAll()).willReturn(bookings);
-        mvc.perform(get("/booking")
+        given(bookingService.findBookings(anyString())).willReturn(bookings);
+
+        mvc.perform(get("/booking/car/ABC123")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
@@ -59,9 +61,9 @@ class BookingRestControllerTest {
     void givenBookingServiceWhenCheckBookingThenReturnTrue() throws Exception {
         LocalDateTime date = now();
         DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
-        given(bookingService.isAvailable(any(LocalDateTime.class), any(LocalDateTime.class))).willReturn(TRUE);
+        given(bookingService.isAvailable(anyString(), any(LocalDateTime.class), any(LocalDateTime.class))).willReturn(TRUE);
         mvc.perform(get(
-            "/booking/check/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+            "/booking/car/ABC123/check/from/" + formatter.format(date) + "/to/" + formatter.format(date)
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())

@@ -94,7 +94,7 @@ class AvailabilityServiceTest {
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
-        Boolean isAvailable = availabilityService.isAvailable("ABC123", now.minusNanos(1l), now.plusHours(1L));
+        Boolean isAvailable = availabilityService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L));
 
         assertFalse(isAvailable);
     }

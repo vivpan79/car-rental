@@ -1,19 +1,19 @@
 package com.infor.carrental.service;
 
-import static java.lang.String.format;
-
-import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Booking;
 import com.infor.carrental.persistence.repository.AvailabilityRepository;
 import com.infor.carrental.persistence.repository.BookingRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class BookingService {
+
+    public static final Logger logger = LoggerFactory.getLogger(BookingService.class);
 
     @Autowired
     private BookingRepository bookingRepository;
@@ -24,10 +24,23 @@ public class BookingService {
         return bookingRepository.findAll();
     }
 
-    public Boolean isAvailable(LocalDateTime fromDate, LocalDateTime toDate) {
-        Optional<Availability> availabilities = availabilityRepository
-            .findOptionalByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
-        System.out.println(format(" Availability fromDate: %s toDate: %s \n", fromDate, toDate));
-        return !availabilities.isPresent();
+    public Boolean isAvailable(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
+        List<Booking> availabilities = bookingRepository
+            .findByCarNumberPlateFromDateGreaterThanOrToDateLessThan(carNumberPlate, fromDate, toDate);
+        logger.info("Availability of {} fromDate: {} toDate: {} ", carNumberPlate, fromDate, toDate);
+        return availabilities.isEmpty();
+    }
+
+    public List<Booking> findBookings(String carNumberPlate) {
+        return bookingRepository.findByCarNumberPlate(carNumberPlate);
+    }
+
+    public Booking save(Booking booking) {
+        return bookingRepository.save(booking);
+
+    }
+
+    public void deleteAll() {
+        bookingRepository.deleteAll();
     }
 }
