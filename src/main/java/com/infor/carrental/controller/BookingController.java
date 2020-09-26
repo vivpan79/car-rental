@@ -76,7 +76,7 @@ public class BookingController {
     }
 
     @GetMapping(value = "/payments/from/{fromDate}/to/{toDate}")
-    public Double getCarBookingPayment(
+    public Long getCarBookingPayment(
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
         @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate
     ) {

@@ -75,4 +75,12 @@ public class AvailabilityService {
                 maxPricePerHour);
         return availabilityList.stream().map(Availability::getCar).collect(Collectors.toList());
     }
+
+    public Availability getAvailability(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
+        List<Availability> availabilities = availabilityRepository
+            .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual(carNumberPlate, fromDate, toDate,
+                Long.MAX_VALUE);
+        logger.info("get Availability of {} fromDate: {} toDate: {}", carNumberPlate, fromDate, toDate);
+        return availabilities.get(0);
+    }
 }

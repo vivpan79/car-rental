@@ -137,13 +137,13 @@ class BookingRestControllerTest {
         booking.setFromDate(date);
         booking.setToDate(date);
         given(bookingService.paymentFromBookedCars(any(LocalDateTime.class), any(LocalDateTime.class)))
-            .willReturn(123.45);
+            .willReturn(123L);
         mvc.perform(get(
             "/booking/payments/from/" + formatter.format(date) + "/to/" + formatter.format(date)
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", is(123.45)))
+            .andExpect(jsonPath("$", is(123)))
         ;
     }
 }

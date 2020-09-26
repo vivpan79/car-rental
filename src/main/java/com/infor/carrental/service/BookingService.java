@@ -1,9 +1,11 @@
 package com.infor.carrental.service;
 
 import static java.lang.String.format;
+import static java.time.LocalDateTime.from;
 
 import com.infor.carrental.exception.AlreadyBookedException;
 import com.infor.carrental.exception.NoAvailabilityException;
+import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Booking;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.BookingRepository;
@@ -70,7 +72,7 @@ public class BookingService {
 
     public Long findBookedHours(LocalDateTime fromDate, LocalDateTime toDate) {
         List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
-        return bookings.stream().map(x -> LocalDateTime.from(x.getFromDate()).until(x.getToDate(), ChronoUnit.HOURS))
+        return bookings.stream().map(x -> from(x.getFromDate()).until(x.getToDate(), ChronoUnit.HOURS))
             .mapToLong(Long::longValue).sum();
     }
 
@@ -80,9 +82,15 @@ public class BookingService {
         return ((double) totalCarsBooked / totalBookedHours);
     }
 
-    public Double paymentFromBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
-        long totalCarsBooked = findBookedCars(fromDate, toDate).size();
-        long totalBookedHours = findBookedHours(fromDate, toDate);
-        return ((double) totalCarsBooked / totalBookedHours);
+    public Long paymentFromBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
+        List<Car> carsBooked = findBookedCars(fromDate, toDate);
+
+        return carsBooked.stream().map(x ->
+            {
+                Availability availability = availabilityService.getAvailability(x.getNumberPlate(), fromDate, toDate);
+                long hoursBooked = from(availability.getFromDate()).until(availability.getToDate(), ChronoUnit.HOURS);
+                return (availability.getPricePerHour() * hoursBooked);
+            }
+        ).mapToLong(Long::longValue).sum();
     }
 }
