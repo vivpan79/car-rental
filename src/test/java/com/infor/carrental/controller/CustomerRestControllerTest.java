@@ -3,6 +3,7 @@ package com.infor.carrental.controller;
 import static java.util.Collections.singletonList;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -12,10 +13,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infor.carrental.persistence.entity.Customer;
-import com.infor.carrental.persistence.repository.CustomerRepository;
-import java.util.Collections;
+import com.infor.carrental.service.CustomerService;
 import java.util.List;
-import org.hamcrest.CoreMatchers;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +33,14 @@ class CustomerRestControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    private CustomerRepository customerRepository;
+    private CustomerService customerService;
 
     @Test
     void givenCustomerServiceWhenGetCustomersThenReturnJsonArray() throws Exception {
         Customer customer = new Customer();
         customer.setUserName("NewUser");
         List<Customer> customers = singletonList(customer);
-        given(customerRepository.findAll()).willReturn(customers);
+        given(customerService.findAll()).willReturn(customers);
         mvc.perform(get("/customer")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
@@ -50,12 +49,11 @@ class CustomerRestControllerTest {
     }
 
     @Test
-    void givenCustomerServiceWhenRegisterCustomersThenReturnJsonArray() throws Exception {
+    void givenCustomerServiceWhenRegisterCustomerThenReturnJsonArray() throws Exception {
         Customer customer = new Customer();
         customer.setUserName("NewUser");
         customer.setPassword("Password");
-        List<Customer> customers = singletonList(customer);
-        given(customerRepository.findAll()).willReturn(customers);
+        given(customerService.save(any(Customer.class))).willReturn(customer);
         mvc.perform(post("/customer/register")
             .content(new ObjectMapper().writeValueAsString(new RestCustomer(customer)))
             .contentType(APPLICATION_JSON))
