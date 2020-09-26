@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -70,6 +71,26 @@ class AvailabilityRestControllerTest {
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", is(TRUE)))
+        ;
+    }
+
+    @Test
+    void givenAvailabilityServiceWhenRegisterAvailabilityForCarThenReturnOk() throws Exception {
+        LocalDateTime date = now();
+        DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm");
+        Availability availability = new Availability();
+        availability.setFromDate(date);
+        availability.setToDate(date);
+        given(availabilityService.registerAvailability(anyString(), any(LocalDateTime.class), any(LocalDateTime.class)))
+            .willReturn(availability);
+
+        mvc.perform(post(
+            "/availability/car/ABC123/register/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+        )
+            .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.fromDate", is(date.toString())))
+            .andExpect(jsonPath("$.toDate", is(date.toString())))
         ;
     }
 }

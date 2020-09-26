@@ -1,6 +1,9 @@
 package com.infor.carrental.service;
 
+import static java.lang.String.format;
+
 import com.infor.carrental.persistence.entity.Availability;
+import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.AvailabilityRepository;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -16,6 +19,8 @@ public class AvailabilityService {
 
     @Autowired
     private AvailabilityRepository availabilityRepository;
+    @Autowired
+    private CarService carService;
 
     public Boolean isAvailable(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
         List<Availability> availabilities = availabilityRepository
@@ -34,5 +39,21 @@ public class AvailabilityService {
 
     public Availability save(Availability availability) {
         return availabilityRepository.save(availability);
+    }
+
+    public Availability registerAvailability(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
+        Car savedCar = carService.findByNumberPlate(numberPlate);
+        if (null == savedCar) {
+            throw new IllegalArgumentException(format("Car with numberPlate %s does not exist", numberPlate));
+        }
+        Availability availability = new Availability();
+        availability.setFromDate(fromDate);
+        availability.setToDate(toDate);
+        availability.setCar(savedCar);
+        return availabilityRepository.save(availability);
+    }
+
+    public void deleteAll() {
+        availabilityRepository.deleteAll();
     }
 }

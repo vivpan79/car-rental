@@ -4,6 +4,7 @@ import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.infor.carrental.Application;
@@ -45,6 +46,8 @@ class AvailabilityServiceTest {
 
         assertNotNull(availabilityList);
         assertEquals(1, availabilityList.size());
+        availabilityService.deleteAll();
+        carRepository.deleteAll();
     }
 
     @Test
@@ -62,6 +65,8 @@ class AvailabilityServiceTest {
         Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusHours(1L));
 
         assertTrue(isAvailable);
+        availabilityService.deleteAll();
+        carRepository.deleteAll();
     }
 
     @Test
@@ -80,6 +85,8 @@ class AvailabilityServiceTest {
             .isAvailable("ABC123", now.plusMinutes(20L), now.plusHours(1L).minusMinutes(10L));
 
         assertTrue(isAvailable);
+        availabilityService.deleteAll();
+        carRepository.deleteAll();
     }
 
     @Test
@@ -97,6 +104,8 @@ class AvailabilityServiceTest {
         Boolean isAvailable = availabilityService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L));
 
         assertFalse(isAvailable);
+        availabilityService.deleteAll();
+        carRepository.deleteAll();
     }
 
     @Test
@@ -114,5 +123,15 @@ class AvailabilityServiceTest {
         Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusMinutes(61L));
 
         assertFalse(isAvailable);
+        availabilityService.deleteAll();
+        carRepository.deleteAll();
+    }
+
+    @Test
+    void givenAvailabilityServiceWhenRegisterAvailabilityForMissingCarThenException() {
+        LocalDateTime now = now();
+        assertThrows(IllegalArgumentException.class, () -> {
+            availabilityService.registerAvailability("ABC123", now, now);
+        });
     }
 }
