@@ -2,6 +2,7 @@ package com.infor.carrental.service;
 
 import static java.time.LocalDateTime.now;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -47,7 +48,7 @@ class AvailabilityServiceTest {
     }
 
     @Test
-    void givenAvailabilityServiceWhenCheckAvailabilityForCarThenReturnJsonArray() {
+    void givenAvailabilityServiceWhenCheckAvailabilityForCarExactDateMatchThenReturnTrue() {
         Availability availability = new Availability();
         LocalDateTime now = now();
         availability.setFromDate(now);
@@ -61,5 +62,57 @@ class AvailabilityServiceTest {
         Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusHours(1L));
 
         assertTrue(isAvailable);
+    }
+
+    @Test
+    void givenAvailabilityServiceWhenCheckAvailabilityForCarThenReturnTrue() {
+        Availability availability = new Availability();
+        LocalDateTime now = now();
+        availability.setFromDate(now);
+        availability.setToDate(now.plusHours(1L));
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        Car savedCar = carRepository.save(car);
+        availability.setCar(savedCar);
+        availabilityService.save(availability);
+
+        Boolean isAvailable = availabilityService
+            .isAvailable("ABC123", now.plusMinutes(20L), now.plusHours(1L).minusMinutes(10L));
+
+        assertTrue(isAvailable);
+    }
+
+    @Test
+    void givenAvailabilityServiceWhenCheckAvailabilityForCarExceedFromDateThenReturnFalse() {
+        Availability availability = new Availability();
+        LocalDateTime now = now();
+        availability.setFromDate(now);
+        availability.setToDate(now.plusHours(1L));
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        Car savedCar = carRepository.save(car);
+        availability.setCar(savedCar);
+        availabilityService.save(availability);
+
+        Boolean isAvailable = availabilityService.isAvailable("ABC123", now.minusNanos(1l), now.plusHours(1L));
+
+        assertFalse(isAvailable);
+    }
+
+    @Test
+    void givenAvailabilityServiceWhenCheckAvailabilityForCarExceedToDateThenReturnFalse() {
+        Availability availability = new Availability();
+        LocalDateTime now = now();
+        availability.setFromDate(now);
+        availability.setToDate(now.plusHours(1L));
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        Car savedCar = carRepository.save(car);
+        availability.setCar(savedCar);
+        availabilityService.save(availability);
+
+        Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusMinutes(61L));
+
+        assertFalse(isAvailable);
     }
 }
