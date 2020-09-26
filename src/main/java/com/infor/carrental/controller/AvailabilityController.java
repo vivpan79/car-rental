@@ -46,14 +46,16 @@ public class AvailabilityController {
         return availabilityService.isAvailable(numberPlate, fromDate, toDate);
     }
 
-    @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}")
+    @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}/rate/{pricePerHour}")
     public Availability registerAvailability(
         @PathVariable(name = "numberPlate") String numberPlate,
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
-        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate,
+        @PathVariable(name = "pricePerHour") Long pricePerHour
     ) {
-        LOGGER.info("Register availability of {} fromDate: {} toDate: {} ", numberPlate, fromDate, toDate);
-        return availabilityService.registerAvailability(numberPlate, fromDate, toDate);
+        LOGGER.info("Register availability of {} fromDate: {} toDate: {} at rate: {}", numberPlate, fromDate, toDate,
+            pricePerHour);
+        return availabilityService.registerAvailability(numberPlate, fromDate, toDate, pricePerHour);
     }
 
 }

@@ -42,7 +42,8 @@ public class AvailabilityService {
         return availabilityRepository.save(availability);
     }
 
-    public Availability registerAvailability(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
+    public Availability registerAvailability(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate,
+        Long pricePerHour) {
         Car savedCar = carService.findByNumberPlate(numberPlate);
         if (null == savedCar) {
             throw new NoRegisteredCarException(format("Car with numberPlate %s does not exist", numberPlate));
@@ -51,6 +52,7 @@ public class AvailabilityService {
         availability.setFromDate(fromDate);
         availability.setToDate(toDate);
         availability.setCar(savedCar);
+        availability.setPricePerHour(pricePerHour);
         return availabilityRepository.save(availability);
     }
 

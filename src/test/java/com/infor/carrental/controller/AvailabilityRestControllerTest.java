@@ -6,6 +6,7 @@ import static java.time.format.DateTimeFormatter.ofPattern;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -81,16 +82,20 @@ class AvailabilityRestControllerTest {
         Availability availability = new Availability();
         availability.setFromDate(date);
         availability.setToDate(date);
-        given(availabilityService.registerAvailability(anyString(), any(LocalDateTime.class), any(LocalDateTime.class)))
+        availability.setPricePerHour(100L);
+        given(availabilityService.registerAvailability(anyString(), any(LocalDateTime.class), any(LocalDateTime.class),
+            anyLong()))
             .willReturn(availability);
 
         mvc.perform(post(
             "/availability/car/ABC123/register/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+                + "/rate/100"
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.fromDate", is(date.toString())))
             .andExpect(jsonPath("$.toDate", is(date.toString())))
+            .andExpect(jsonPath("$.pricePerHour", is(100)))
         ;
     }
 }

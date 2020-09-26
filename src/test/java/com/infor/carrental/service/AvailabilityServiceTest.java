@@ -123,7 +123,7 @@ class AvailabilityServiceTest {
     void givenAvailabilityServiceWhenRegisterAvailabilityForMissingCarThenException() {
         LocalDateTime now = now();
         assertThrows(NoRegisteredCarException.class, () -> {
-            availabilityService.registerAvailability("ABC123", now, now);
+            availabilityService.registerAvailability("ABC123", now, now, 100L);
         });
     }
 

@@ -27,6 +27,9 @@ public class Availability {
     @Column(name = "available_till")
     private LocalDateTime toDate;
 
+    @Column(name = "price_per_hour")
+    private Long pricePerHour;
+
     public Car getCar() {
         return car;
     }
@@ -49,5 +52,13 @@ public class Availability {
 
     public void setToDate(LocalDateTime toDate) {
         this.toDate = toDate;
+    }
+
+    public Long getPricePerHour() {
+        return pricePerHour;
+    }
+
+    public void setPricePerHour(Long pricePerHour) {
+        this.pricePerHour = pricePerHour;
     }
 }
