@@ -9,6 +9,8 @@ import com.infor.carrental.persistence.repository.AvailabilityRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,6 +49,7 @@ public class AvailabilityService {
         return availabilityRepository.save(availability);
     }
 
+    @Transactional(TxType.REQUIRED)
     public Availability registerAvailability(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate,
         Long pricePerHour) {
         Car savedCar = carService.findByNumberPlate(numberPlate);

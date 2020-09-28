@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,6 +54,7 @@ public class BookingService {
         bookingRepository.deleteAll();
     }
 
+    @Transactional(TxType.REQUIRED)
     public Booking registerBooking(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
         if (!isAvailable(numberPlate, fromDate, toDate)) {
             throw new AlreadyBookedException(format("Car with numberPlate %s already booked", numberPlate));

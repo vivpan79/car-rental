@@ -15,6 +15,7 @@ import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.CarRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import javax.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,6 +52,7 @@ class BookingServiceTest {
         assertEquals(1, bookingList.size());
     }
 
+    @Transactional
     @Test
     void givenBookingServiceWhenCheckBookingForCarExactDateMatchThenReturnFalse() {
         Booking booking = new Booking();
@@ -68,6 +70,7 @@ class BookingServiceTest {
         assertFalse(isAvailable);
     }
 
+    @Transactional
     @Test
     void givenBookingServiceWhenCheckBookingForCarThenReturnTrue() {
         Booking booking = new Booking();
@@ -86,6 +89,7 @@ class BookingServiceTest {
         assertTrue(isAvailable);
     }
 
+    @Transactional
     @Test
     void givenBookingServiceWhenCheckBookingForCarExceedFromDateThenReturnFalse() {
         Booking booking = new Booking();
@@ -103,6 +107,7 @@ class BookingServiceTest {
         assertFalse(isAvailable);
     }
 
+    @Transactional
     @Test
     void givenBookingServiceWhenCheckBookingForCarExceedToDateThenReturnFalse() {
         Booking booking = new Booking();
@@ -166,6 +171,9 @@ class BookingServiceTest {
 
     @Test
     void givenBookingServiceWhenPaymentFromBookedCarsThenReturnPayment() {
+        LocalDateTime now = now();
+        Long payment = bookingService.paymentFromBookedCars(now, now.plusMonths(2));
+        assertEquals(0, payment);
     }
 
     @Test
