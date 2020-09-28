@@ -3,7 +3,10 @@ package com.infor.carrental.controller;
 import com.infor.carrental.controller.model.RestCustomer;
 import com.infor.carrental.persistence.entity.Customer;
 import com.infor.carrental.service.CustomerService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,12 +22,24 @@ public class CustomerController {
     private CustomerService customerService;
 
     @GetMapping
-    public List<Customer> getAll() {
-        return customerService.findAll();
+    @ApiOperation(
+        value = "Get all Customers information.",
+        notes = "Get all Customers information.",
+        response = RestCustomer.class, responseContainer = "List")
+    public List<RestCustomer> getAll() {
+        List<Customer> customers = customerService.findAll();
+        return customers.stream().map(RestCustomer::new).collect(Collectors.toList());
     }
 
     @PostMapping(value = "register")
-    public RestCustomer registerCustomer(@RequestBody RestCustomer customer){
+    @ApiOperation(
+        value = "Register a Customer.",
+        notes = "Register a Customer.",
+        response = RestCustomer.class)
+    public RestCustomer registerCustomer(
+        @ApiParam(value = "Customer information")
+        @RequestBody RestCustomer customer
+    ) {
         Customer savedCustomer = customerService.save(customer.toJpa());
         return new RestCustomer(savedCustomer);
     }

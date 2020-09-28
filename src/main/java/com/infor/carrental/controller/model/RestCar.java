@@ -1,9 +1,11 @@
 package com.infor.carrental.controller.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.infor.carrental.persistence.entity.Car;
 
 public class RestCar {
 
+    @JsonIgnore
     private Long id;
     private String numberPlate;
 

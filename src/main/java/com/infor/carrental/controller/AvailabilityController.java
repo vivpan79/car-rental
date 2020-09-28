@@ -1,9 +1,14 @@
 package com.infor.carrental.controller;
 
+import static com.infor.carrental.controller.model.Constants.DATE_TIME;
+
 import com.infor.carrental.controller.model.RestAvailability;
+import com.infor.carrental.controller.model.RestCar;
 import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.service.AvailabilityService;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,13 +32,22 @@ public class AvailabilityController {
     private AvailabilityService availabilityService;
 
     @GetMapping
+    @ApiOperation(
+        value = "Get all car availability information.",
+        notes = "Get all car availability information.",
+        response = RestAvailability.class, responseContainer = "List")
     public List<RestAvailability> getAll() {
         List<Availability> availabilities = availabilityService.findAll();
         return availabilities.stream().map(RestAvailability::new).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/car/{numberPlate}")
+    @ApiOperation(
+        value = "Get availability of a car.",
+        notes = "Get availability of a car.",
+        response = RestAvailability.class, responseContainer = "List")
     public List<Availability> getAvailability(
+        @ApiParam(value = "Number plate of the car")
         @PathVariable(name = "numberPlate") String numberPlate
     ) {
         LOGGER.info("get availability for car : {}", numberPlate);
@@ -41,10 +55,17 @@ public class AvailabilityController {
     }
 
     @GetMapping(value = "/car/{numberPlate}/check/from/{fromDate}/to/{toDate}/maxrate/{maxPricePerHour}")
+    @ApiOperation(
+        value = "Check availability of a car between dates.",
+        notes = "Check availability of a car between dates.",
+        response = Boolean.class)
     public Boolean checkAvailability(
+        @ApiParam(value = "Number plate of the car")
         @PathVariable(name = "numberPlate") String numberPlate,
-        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
-        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate,
+        @ApiParam(value = "Car availability start date.")
+        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime fromDate,
+        @ApiParam(value = "Car availability end date.")
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime toDate,
         @PathVariable(name = "maxPricePerHour") Long maxPricePerHour
     ) {
         LOGGER
@@ -54,27 +75,42 @@ public class AvailabilityController {
     }
 
     @GetMapping(value = "/find/from/{fromDate}/to/{toDate}/maxrate/{maxPricePerHour}")
-    public List<Car> findAvailableCars(
-        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
-        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate,
+    @ApiOperation(
+        value = "All available cars between dates.",
+        notes = "All available cars between dates.",
+        response = RestCar.class, responseContainer = "List")
+    public List<RestCar> findAvailableCars(
+        @ApiParam(value = "Car availability start date.")
+        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime fromDate,
+        @ApiParam(value = "Car availability end date.")
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime toDate,
         @PathVariable(name = "maxPricePerHour") Long maxPricePerHour
     ) {
         LOGGER
             .info("Find available cars fromDate: {} toDate: {} at maxPricePerHour: {} ", fromDate,
                 toDate, maxPricePerHour);
-        return availabilityService.findAvailableCars(fromDate, toDate, maxPricePerHour);
+        List<Car> availableCars = availabilityService.findAvailableCars(fromDate, toDate, maxPricePerHour);
+        return availableCars.stream().map(RestCar::new).collect(Collectors.toList());
     }
 
     @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}/rate/{pricePerHour}")
-    public Availability registerAvailability(
+    @ApiOperation(
+        value = "Register availability of car between dates with booking rate.",
+        notes = "Register availability of car between dates with booking rate.",
+        response = RestAvailability.class)
+    public RestAvailability registerAvailability(
+        @ApiParam(value = "Number plate of the car")
         @PathVariable(name = "numberPlate") String numberPlate,
-        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
-        @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate,
+        @ApiParam(value = "Car availability start date.")
+        @PathVariable(name = "fromDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime fromDate,
+        @ApiParam(value = "Car availability end date.")
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime toDate,
         @PathVariable(name = "pricePerHour") Long pricePerHour
     ) {
         LOGGER.info("Register availability of {} fromDate: {} toDate: {} at rate: {}", numberPlate, fromDate, toDate,
             pricePerHour);
-        return availabilityService.registerAvailability(numberPlate, fromDate, toDate, pricePerHour);
+        return new RestAvailability(
+            availabilityService.registerAvailability(numberPlate, fromDate, toDate, pricePerHour));
     }
 
 }
