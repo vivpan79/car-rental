@@ -14,7 +14,6 @@ import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.CarRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,12 +38,12 @@ class AvailabilityServiceTest {
         availability.setFromDate(now);
         availability.setToDate(now.plusHours(1L));
         Car car = new Car();
-        car.setNumberPlate("ABC123");
+        car.setNumberPlate("ABC1111");
         Car savedCar = carRepository.save(car);
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
-        List<Availability> availabilityList = availabilityService.getAvailability("ABC123");
+        List<Availability> availabilityList = availabilityService.getAvailability("ABC1111");
 
         assertNotNull(availabilityList);
         assertEquals(1, availabilityList.size());
@@ -58,12 +57,12 @@ class AvailabilityServiceTest {
         availability.setToDate(now.plusHours(1L));
         availability.setPricePerHour(Long.MAX_VALUE);
         Car car = new Car();
-        car.setNumberPlate("ABC123");
+        car.setNumberPlate("ABC2222");
         Car savedCar = carRepository.save(car);
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
-        Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusHours(1L), Long.MAX_VALUE);
+        Boolean isAvailable = availabilityService.isAvailable("ABC2222", now, now.plusHours(1L), Long.MAX_VALUE);
 
         assertTrue(isAvailable);
     }
@@ -76,13 +75,13 @@ class AvailabilityServiceTest {
         availability.setToDate(now.plusHours(1L));
         availability.setPricePerHour(Long.MAX_VALUE);
         Car car = new Car();
-        car.setNumberPlate("ABC123");
+        car.setNumberPlate("ABC3333");
         Car savedCar = carRepository.save(car);
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
         Boolean isAvailable = availabilityService
-            .isAvailable("ABC123", now.plusMinutes(20L), now.plusHours(1L).minusMinutes(10L), Long.MAX_VALUE);
+            .isAvailable("ABC3333", now.plusMinutes(20L), now.plusHours(1L).minusMinutes(10L), Long.MAX_VALUE);
 
         assertTrue(isAvailable);
     }
@@ -94,12 +93,12 @@ class AvailabilityServiceTest {
         availability.setFromDate(now);
         availability.setToDate(now.plusHours(1L));
         Car car = new Car();
-        car.setNumberPlate("ABC123");
+        car.setNumberPlate("ABC4444");
         Car savedCar = carRepository.save(car);
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
-        Boolean isAvailable = availabilityService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L),
+        Boolean isAvailable = availabilityService.isAvailable("ABC4444", now.minusNanos(1L), now.plusHours(1L),
             Long.MAX_VALUE);
 
         assertFalse(isAvailable);
@@ -112,12 +111,12 @@ class AvailabilityServiceTest {
         availability.setFromDate(now);
         availability.setToDate(now.plusHours(1L));
         Car car = new Car();
-        car.setNumberPlate("ABC123");
+        car.setNumberPlate("ABC5555");
         Car savedCar = carRepository.save(car);
         availability.setCar(savedCar);
         availabilityService.save(availability);
 
-        Boolean isAvailable = availabilityService.isAvailable("ABC123", now, now.plusMinutes(61L), Long.MAX_VALUE);
+        Boolean isAvailable = availabilityService.isAvailable("ABC5555", now, now.plusMinutes(61L), Long.MAX_VALUE);
 
         assertFalse(isAvailable);
     }
@@ -125,12 +124,7 @@ class AvailabilityServiceTest {
     @Test
     void givenAvailabilityServiceWhenRegisterAvailabilityForMissingCarThenException() {
         LocalDateTime now = now();
-        assertThrows(NoRegisteredCarException.class, () -> availabilityService.registerAvailability("ABC123", now, now, 100L));
-    }
-
-    @AfterEach
-    void tearDown() {
-        availabilityService.deleteAll();
-        carRepository.deleteAll();
+        assertThrows(NoRegisteredCarException.class,
+            () -> availabilityService.registerAvailability("ABC6666", now, now, 100L));
     }
 }
