@@ -193,6 +193,5 @@ class BookingServiceTest {
     @AfterEach
     void tearDown() {
         bookingService.deleteAll();
-        carRepository.deleteAll();
     }
 }

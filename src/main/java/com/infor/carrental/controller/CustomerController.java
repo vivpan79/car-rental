@@ -1,5 +1,6 @@
 package com.infor.carrental.controller;
 
+import com.infor.carrental.controller.model.RestCustomer;
 import com.infor.carrental.persistence.entity.Customer;
 import com.infor.carrental.service.CustomerService;
 import java.util.List;

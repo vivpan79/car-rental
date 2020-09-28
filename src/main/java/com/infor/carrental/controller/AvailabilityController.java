@@ -1,10 +1,12 @@
 package com.infor.carrental.controller;
 
+import com.infor.carrental.controller.model.RestAvailability;
 import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.service.AvailabilityService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,8 +27,9 @@ public class AvailabilityController {
     private AvailabilityService availabilityService;
 
     @GetMapping
-    public List<Availability> getAll() {
-        return availabilityService.findAll();
+    public List<RestAvailability> getAll() {
+        List<Availability> availabilities = availabilityService.findAll();
+        return availabilities.stream().map(RestAvailability::new).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/car/{numberPlate}")

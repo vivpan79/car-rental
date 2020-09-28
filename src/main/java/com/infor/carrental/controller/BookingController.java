@@ -1,10 +1,12 @@
 package com.infor.carrental.controller;
 
+import com.infor.carrental.controller.model.RestBooking;
 import com.infor.carrental.persistence.entity.Booking;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.service.BookingService;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,16 +27,18 @@ public class BookingController {
     private BookingService bookingService;
 
     @GetMapping
-    public List<Booking> getAll() {
-        return bookingService.findAll();
+    public List<RestBooking> getAll() {
+        List<Booking> bookings = bookingService.findAll();
+        return bookings.stream().map(RestBooking::new).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/car/{numberPlate}")
-    public List<Booking> getBookings(
+    public List<RestBooking> getBookings(
         @PathVariable(name = "numberPlate") String numberPlate
     ) {
         LOGGER.info("get booking for car : {}", numberPlate);
-        return bookingService.findBookings(numberPlate);
+        List<Booking> bookings = bookingService.findBookings(numberPlate);
+        return bookings.stream().map(RestBooking::new).collect(Collectors.toList());
     }
 
     @GetMapping(value = "/car/{numberPlate}/check/from/{fromDate}/to/{toDate}")
@@ -48,13 +52,14 @@ public class BookingController {
     }
 
     @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}")
-    public Booking registerBooking(
+    public RestBooking registerBooking(
         @PathVariable(name = "numberPlate") String numberPlate,
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime fromDate,
         @PathVariable(name = "toDate") @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm") LocalDateTime toDate
     ) {
         LOGGER.info("Register booking of {} fromDate: {} toDate: {} ", numberPlate, fromDate, toDate);
-        return bookingService.registerBooking(numberPlate, fromDate, toDate);
+        Booking booking = bookingService.registerBooking(numberPlate, fromDate, toDate);
+        return new RestBooking(booking);
     }
 
     @GetMapping(value = "/find/from/{fromDate}/to/{toDate}")

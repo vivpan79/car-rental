@@ -9,7 +9,6 @@ import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Car;
 import java.time.LocalDateTime;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,7 @@ class AvailabilityRepositoryTest {
     @Test
     void givenAvailabilityRepositoryWhenSaveAndRetrieveAvailabilityEntityThenExactMatch() {
         Car car = new Car();
-        car.setNumberPlate("ABC-123");
+        car.setNumberPlate("ABC-111");
         Car savedCar = carRepository.save(car);
         Availability availability = new Availability();
         LocalDateTime currentDataTime = LocalDateTime.now();
@@ -46,13 +45,13 @@ class AvailabilityRepositoryTest {
         assertFalse(availabilities.isEmpty());
         assertEquals(currentDataTime, availabilities.get(0).getFromDate());
         assertEquals(currentDataTime.plusMinutes(1L), availabilities.get(0).getToDate());
-        assertEquals("ABC-123", availabilities.get(0).getCar().getNumberPlate());
+        assertEquals("ABC-111", availabilities.get(0).getCar().getNumberPlate());
     }
 
     @Test
     void givenAvailabilityRepositoryWhenBookingDateMatchAvailabilityThenReturnEmptyRejectedByAvailability() {
         Car car = new Car();
-        car.setNumberPlate("ABC-123");
+        car.setNumberPlate("ABC-222");
         Car savedCar = carRepository.save(car);
         Availability availability = new Availability();
         LocalDateTime currentDataTime = LocalDateTime.now();
@@ -68,16 +67,16 @@ class AvailabilityRepositoryTest {
 
         List<Availability> availabilities =
             availabilityRepository
-                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-123", bookingStart,
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-222", bookingStart,
                     bookingEnd, Long.MAX_VALUE);
         assertFalse(availabilities.isEmpty());
-        assertEquals("ABC-123", availabilities.get(0).getCar().getNumberPlate());
+        assertEquals("ABC-222", availabilities.get(0).getCar().getNumberPlate());
     }
 
     @Test
     void givenAvailabilityRepositoryWhenBookingDateBetweenAvailabilityThenReturnEmptyRejectedByAvailability() {
         Car car = new Car();
-        car.setNumberPlate("ABC-123");
+        car.setNumberPlate("ABC-333");
         Car savedCar = carRepository.save(car);
         Availability availability = new Availability();
         LocalDateTime currentDataTime = LocalDateTime.now();
@@ -93,17 +92,17 @@ class AvailabilityRepositoryTest {
 
         List<Availability> availabilities =
             availabilityRepository
-                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-123", bookingStart,
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-333", bookingStart,
                     bookingEnd, Long.MAX_VALUE);
 
         assertFalse(availabilities.isEmpty());
-        assertEquals("ABC-123", availabilities.get(0).getCar().getNumberPlate());
+        assertEquals("ABC-333", availabilities.get(0).getCar().getNumberPlate());
     }
 
     @Test
     void givenAvailabilityRepositoryWhenBookingDateFromDateExceedsAvailabilityThenReturnRejectedByAvailability() {
         Car car = new Car();
-        car.setNumberPlate("ABC-123");
+        car.setNumberPlate("ABC-444");
         Car savedCar = carRepository.save(car);
         Availability availability = new Availability();
         LocalDateTime currentDataTime = LocalDateTime.now();
@@ -118,7 +117,7 @@ class AvailabilityRepositoryTest {
 
         List<Availability> availabilities =
             availabilityRepository
-                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-123", bookingStart,
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-444", bookingStart,
                     bookingEnd, Long.MAX_VALUE);
 
         assertTrue(availabilities.isEmpty());
@@ -127,7 +126,7 @@ class AvailabilityRepositoryTest {
     @Test
     void givenAvailabilityRepositoryWhenBookingDateToDateExceedsAvailabilityThenReturnRejectedByAvailability() {
         Car car = new Car();
-        car.setNumberPlate("ABC-123");
+        car.setNumberPlate("ABC-555");
         Car savedCar = carRepository.save(car);
         Availability availability = new Availability();
         LocalDateTime currentDataTime = LocalDateTime.now();
@@ -142,15 +141,10 @@ class AvailabilityRepositoryTest {
 
         List<Availability> availabilities =
             availabilityRepository
-                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-123", bookingStart,
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-555", bookingStart,
                     bookingEnd, Long.MAX_VALUE);
 
         assertTrue(availabilities.isEmpty());
     }
 
-    @AfterEach
-    void tearDown() {
-        availabilityRepository.deleteAll();
-        carRepository.deleteAll();
-    }
 }

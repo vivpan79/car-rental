@@ -45,8 +45,11 @@ class BookingRestControllerTest {
     void givenBookingServiceWhenGetBookingsForCarThenReturnJsonArray() throws Exception {
         Booking booking = new Booking();
         LocalDateTime date = now();
-        booking.setFromDate(date);
-        booking.setToDate(date);
+        DateTimeFormatter formatter = ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        String formattedDate = formatter.format(date);
+        LocalDateTime localDateTime = LocalDateTime.parse(formattedDate, formatter);
+        booking.setFromDate(localDateTime);
+        booking.setToDate(localDateTime);
         List<Booking> bookings = singletonList(booking);
         given(bookingService.findBookings(anyString())).willReturn(bookings);
 
@@ -54,8 +57,8 @@ class BookingRestControllerTest {
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].fromDate", is(date.toString())))
-            .andExpect(jsonPath("$[0].toDate", is(date.toString())))
+            .andExpect(jsonPath("$[0].fromDate", is(formattedDate)))
+            .andExpect(jsonPath("$[0].toDate", is(formattedDate)))
         ;
     }
 
@@ -81,6 +84,9 @@ class BookingRestControllerTest {
         Booking booking = new Booking();
         booking.setFromDate(date);
         booking.setToDate(date);
+        Car car = new Car();
+        car.setNumberPlate("ABC123");
+        booking.setCar(car);
         given(bookingService.registerBooking(anyString(), any(LocalDateTime.class), any(LocalDateTime.class)))
             .willReturn(booking);
         mvc.perform(post(
@@ -88,8 +94,7 @@ class BookingRestControllerTest {
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.fromDate", is(date.toString())))
-            .andExpect(jsonPath("$.toDate", is(date.toString())))
+            .andExpect(jsonPath("$.car.numberPlate", is("ABC123")))
         ;
     }
 

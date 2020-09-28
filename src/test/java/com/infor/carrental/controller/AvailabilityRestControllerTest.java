@@ -48,6 +48,9 @@ class AvailabilityRestControllerTest {
         LocalDateTime date = now();
         availability.setFromDate(date);
         availability.setToDate(date);
+        Car car = new Car();
+        car.setNumberPlate("ABC666");
+        availability.setCar(car);
         List<Availability> availabilityList = singletonList(availability);
         given(availabilityService.getAvailability(anyString())).willReturn(availabilityList);
 
@@ -55,6 +58,7 @@ class AvailabilityRestControllerTest {
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].car.numberPlate", is("ABC666")))
         ;
     }
 
@@ -83,20 +87,19 @@ class AvailabilityRestControllerTest {
         Availability availability = new Availability();
         availability.setFromDate(date);
         availability.setToDate(date);
-        availability.setPricePerHour(100L);
+        availability.setPricePerHour(1234L);
         given(availabilityService.registerAvailability(anyString(), any(LocalDateTime.class), any(LocalDateTime.class),
             anyLong()))
             .willReturn(availability);
 
+        String formattedDate = formatter.format(date);
         mvc.perform(post(
-            "/availability/car/ABC123/register/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+            "/availability/car/ABC123/register/from/" + formattedDate + "/to/" + formattedDate
                 + "/rate/100"
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.fromDate", is(date.toString())))
-            .andExpect(jsonPath("$.toDate", is(date.toString())))
-            .andExpect(jsonPath("$.pricePerHour", is(100)))
+            .andExpect(jsonPath("$.pricePerHour", is(1234)))
         ;
     }
 

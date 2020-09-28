@@ -30,6 +30,10 @@ public class Availability {
     @Column(name = "price_per_hour")
     private Long pricePerHour;
 
+    public Long getId() {
+        return id;
+    }
+
     public Car getCar() {
         return car;
     }

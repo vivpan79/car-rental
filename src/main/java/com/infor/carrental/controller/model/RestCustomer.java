@@ -1,4 +1,4 @@
-package com.infor.carrental.controller;
+package com.infor.carrental.controller.model;
 
 import com.infor.carrental.persistence.entity.Customer;
 

@@ -12,6 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.infor.carrental.controller.model.RestCustomer;
 import com.infor.carrental.persistence.entity.Customer;
 import com.infor.carrental.service.CustomerService;
 import java.util.List;

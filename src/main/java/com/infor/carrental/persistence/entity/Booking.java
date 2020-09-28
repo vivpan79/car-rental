@@ -27,6 +27,10 @@ public class Booking {
     @Column(name = "available_till")
     private LocalDateTime toDate;
 
+    public Long getId() {
+        return id;
+    }
+
     public Car getCar() {
         return car;
     }
