@@ -34,7 +34,7 @@ class BookingRepositoryTest {
     @Test
     void givenBookingRepositoryWhenSaveAndRetrieveBookingEntityThenExactMatch() {
         Car car = new Car();
-        car.setNumberPlate("ABC-123");
+        car.setNumberPlate("ABC-11");
         Car savedCar = carRepository.save(car);
         Customer customer = new Customer();
         customer.setUserName("TopGear");
@@ -50,7 +50,7 @@ class BookingRepositoryTest {
         assertFalse(availabilities.isEmpty());
         assertEquals(currentDataTime, availabilities.get(0).getFromDate());
         assertEquals(currentDataTime.plusMinutes(1L), availabilities.get(0).getToDate());
-        assertEquals("ABC-123", availabilities.get(0).getCar().getNumberPlate());
+        assertEquals("ABC-11", availabilities.get(0).getCar().getNumberPlate());
         assertEquals("TopGear", availabilities.get(0).getCustomer().getUserName());
     }
 }
