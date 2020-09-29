@@ -17,8 +17,10 @@ import com.infor.carrental.persistence.repository.CarRepository;
 import com.infor.carrental.persistence.repository.CustomerRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import javax.transaction.Transactional;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,20 +40,30 @@ class BookingServiceTest {
     @Autowired
     private CustomerRepository customerRepository;
 
+    @BeforeEach
+    void setup() {
+        Optional<Car> carOptional = carRepository.findByNumberPlate("ABC123");
+        if (!carOptional.isPresent()) {
+            Car car = new Car();
+            car.setNumberPlate("ABC123");
+            carRepository.save(car);
+        }
+        Optional<Customer> customerOptional = customerRepository.findByUserName("TopGear");
+        if (!customerOptional.isPresent()) {
+            Customer customer = new Customer();
+            customer.setUserName("TopGear");
+            customerRepository.save(customer);
+        }
+    }
+
     @Test
     void givenBookingServiceWhenGetBookingForCarThenReturnJsonArray() {
         Booking booking = new Booking();
         LocalDateTime now = now();
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(1L));
-        Car car = new Car();
-        car.setNumberPlate("ABC123");
-        Car savedCar = carRepository.save(car);
-        booking.setCar(savedCar);
-        Customer customer = new Customer();
-        customer.setUserName("TopGear");
-        Customer savedCustomer = customerRepository.save(customer);
-        booking.setCustomer(savedCustomer);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
+        booking.setCustomer(customerRepository.findByUserName("TopGear").get());
         bookingService.save(booking);
 
         List<Booking> bookingList = bookingService.findBookings("ABC123");
@@ -67,14 +79,8 @@ class BookingServiceTest {
         LocalDateTime now = now();
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(1L));
-        Car car = new Car();
-        car.setNumberPlate("ABC123");
-        Car savedCar = carRepository.save(car);
-        booking.setCar(savedCar);
-        Customer customer = new Customer();
-        customer.setUserName("TopGear");
-        Customer savedCustomer = customerRepository.save(customer);
-        booking.setCustomer(savedCustomer);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
+        booking.setCustomer(customerRepository.findByUserName("TopGear").get());
         bookingService.save(booking);
 
         Boolean isAvailable = bookingService.isAvailable("ABC123", now, now.plusHours(1L));
@@ -89,14 +95,8 @@ class BookingServiceTest {
         LocalDateTime now = now();
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(1L));
-        Car car = new Car();
-        car.setNumberPlate("ABC123");
-        Car savedCar = carRepository.save(car);
-        booking.setCar(savedCar);
-        Customer customer = new Customer();
-        customer.setUserName("TopGear");
-        Customer savedCustomer = customerRepository.save(customer);
-        booking.setCustomer(savedCustomer);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
+        booking.setCustomer(customerRepository.findByUserName("TopGear").get());
         bookingService.save(booking);
 
         Boolean isAvailable = bookingService
@@ -112,14 +112,8 @@ class BookingServiceTest {
         LocalDateTime now = now();
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(1L));
-        Car car = new Car();
-        car.setNumberPlate("ABC123");
-        Car savedCar = carRepository.save(car);
-        booking.setCar(savedCar);
-        Customer customer = new Customer();
-        customer.setUserName("TopGear");
-        Customer savedCustomer = customerRepository.save(customer);
-        booking.setCustomer(savedCustomer);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
+        booking.setCustomer(customerRepository.findByUserName("TopGear").get());
         bookingService.save(booking);
 
         Boolean isAvailable = bookingService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L));
@@ -134,14 +128,8 @@ class BookingServiceTest {
         LocalDateTime now = now();
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(1L));
-        Car car = new Car();
-        car.setNumberPlate("ABC123");
-        Car savedCar = carRepository.save(car);
-        booking.setCar(savedCar);
-        Customer customer = new Customer();
-        customer.setUserName("TopGear");
-        Customer savedCustomer = customerRepository.save(customer);
-        booking.setCustomer(savedCustomer);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
+        booking.setCustomer(customerRepository.findByUserName("TopGear").get());
         bookingService.save(booking);
 
         Boolean isAvailable = bookingService.isAvailable("ABC123", now, now.plusMinutes(61L));
@@ -155,14 +143,8 @@ class BookingServiceTest {
         LocalDateTime now = now();
         booking.setFromDate(now);
         booking.setToDate(now);
-        Car car = new Car();
-        car.setNumberPlate("ABC123");
-        Car savedCar = carRepository.save(car);
-        booking.setCar(savedCar);
-        Customer customer = new Customer();
-        customer.setUserName("TopGear");
-        Customer savedCustomer = customerRepository.save(customer);
-        booking.setCustomer(savedCustomer);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
+        booking.setCustomer(customerRepository.findByUserName("TopGear").get());
         bookingService.save(booking);
 
         assertThrows(AlreadyBookedException.class, () -> bookingService.registerBooking("ABC123", now, now, "TopGear"));
@@ -172,26 +154,22 @@ class BookingServiceTest {
     void givenBookingServiceWhenRegisterBookingForUnavailableCarThenException() {
         LocalDateTime now = now();
 
-        assertThrows(NoAvailabilityException.class, () -> bookingService.registerBooking("ABC123", now, now, "userName"));
+        assertThrows(NoAvailabilityException.class,
+            () -> bookingService.registerBooking("ABC123", now, now, "userName"));
     }
 
     @Test
     void givenBookingServiceWhenFindBookedHoursThenReturnBookedHours() {
-        Car car = new Car();
-        car.setNumberPlate("ABC123");
-        Car savedCar = carRepository.save(car);
         LocalDateTime now = now();
         Booking booking = new Booking();
-        booking.setCar(savedCar);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(3));
-        Customer customer = new Customer();
-        customer.setUserName("TopGear");
-        Customer savedCustomer = customerRepository.save(customer);
+        Customer savedCustomer = customerRepository.findByUserName("TopGear").get();
         booking.setCustomer(savedCustomer);
         bookingService.save(booking);
         booking = new Booking();
-        booking.setCar(savedCar);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
         booking.setFromDate(now.plusMonths(1));
         booking.setToDate(now.plusMonths(1).plusHours(7));
         booking.setCustomer(savedCustomer);
@@ -211,21 +189,16 @@ class BookingServiceTest {
 
     @Test
     void givenBookingServiceWhenGetCarBookingFrequencyThenReturnBookingFrequencyT() {
-        Car car = new Car();
-        car.setNumberPlate("ABC123");
-        Car savedCar = carRepository.save(car);
         LocalDateTime now = now();
         Booking booking = new Booking();
-        booking.setCar(savedCar);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(3));
-        Customer customer = new Customer();
-        customer.setUserName("TopGear");
-        Customer savedCustomer = customerRepository.save(customer);
+        Customer savedCustomer = customerRepository.findByUserName("TopGear").get();
         booking.setCustomer(savedCustomer);
         bookingService.save(booking);
         booking = new Booking();
-        booking.setCar(savedCar);
+        booking.setCar(carRepository.findByNumberPlate("ABC123").get());
         booking.setFromDate(now.plusMonths(1));
         booking.setToDate(now.plusMonths(1).plusHours(7));
         booking.setCustomer(savedCustomer);
