@@ -76,6 +76,14 @@ public class BookingService {
         return bookingRepository.save(entity);
     }
 
+    public List<Booking> getBookings(LocalDateTime fromDate, LocalDateTime toDate) {
+        List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
+        if (null == bookings || bookings.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return bookings;
+    }
+
     public List<Car> findBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
         List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
         if (null == bookings || bookings.isEmpty()) {
@@ -94,14 +102,14 @@ public class BookingService {
     }
 
     public Double getCarBookingFrequency(LocalDateTime fromDate, LocalDateTime toDate) {
-        long totalCarsBooked = findBookedCars(fromDate, toDate).size();
+        long totalCarsBookings = getBookings(fromDate, toDate).size();
         long totalBookedHours = findBookedHours(fromDate, toDate);
-        return ((double) totalCarsBooked / totalBookedHours);
+        return ((double) totalCarsBookings / totalBookedHours);
     }
 
     public Long paymentFromBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
-        List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
-        if (null == bookings || bookings.isEmpty()) {
+        List<Booking> bookings = getBookings(fromDate, toDate);
+        if (bookings == null) {
             return 0L;
         }
         return bookings.stream().map(x ->
@@ -113,4 +121,5 @@ public class BookingService {
             }
         ).mapToLong(Long::longValue).sum();
     }
+
 }

@@ -189,22 +189,23 @@ class BookingServiceTest {
 
     @Test
     void givenBookingServiceWhenGetCarBookingFrequencyThenReturnBookingFrequencyT() {
+        bookingService.deleteAll();
         LocalDateTime now = now();
         Booking booking = new Booking();
         booking.setCar(carRepository.findByNumberPlate("ABC123").get());
-        booking.setFromDate(now);
-        booking.setToDate(now.plusHours(3));
+        booking.setFromDate(now.plusYears(1L));
+        booking.setToDate(now.plusYears(1L).plusHours(3));
         Customer savedCustomer = customerRepository.findByUserName("TopGear").get();
         booking.setCustomer(savedCustomer);
         bookingService.save(booking);
         booking = new Booking();
         booking.setCar(carRepository.findByNumberPlate("ABC123").get());
-        booking.setFromDate(now.plusMonths(1));
-        booking.setToDate(now.plusMonths(1).plusHours(7));
+        booking.setFromDate(now.plusYears(1L).plusMonths(1));
+        booking.setToDate(now.plusYears(1L).plusMonths(1).plusHours(7));
         booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
-        Double carBookingFrequency = bookingService.getCarBookingFrequency(now, now.plusMonths(2));
+        Double carBookingFrequency = bookingService.getCarBookingFrequency(now.plusYears(1L), now.plusYears(1L).plusMonths(2));
 
         assertEquals(0.2, carBookingFrequency);
     }
