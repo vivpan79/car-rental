@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface AvailabilityRepository extends JpaRepository<Availability, Long> {
 
     @Query(value = "FROM Availability AS a JOIN Car AS c ON a.car.id = c.id WHERE c.numberPlate = ?1 AND a.fromDate <= ?2 AND a.toDate >= ?3 AND a.pricePerHour <= ?4")
-    List<Availability> findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual(String numberPlate,
+    List<Availability> findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqualPricePerHourLessThanEqual(String numberPlate,
         LocalDateTime fromDate, LocalDateTime toDate, Long maxPricePerHour);
 
     @Query(value = "FROM Availability AS a JOIN Car AS c ON a.car.id = c.id WHERE c.numberPlate = ?1")

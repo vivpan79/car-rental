@@ -127,4 +127,19 @@ class AvailabilityServiceTest {
         assertThrows(NoRegisteredCarException.class,
             () -> availabilityService.registerAvailability("ABC6666", now, now, 100L));
     }
+
+    @Test
+    void getAvailability() {
+
+        LocalDateTime now = now();
+        Car car = new Car();
+        car.setNumberPlate("ABC5555");
+        Car savedCar = carRepository.save(car);
+        availabilityService.registerAvailability("ABC5555", now, now.plusMinutes(61L), 61L);
+
+        Availability carAvailability = availabilityService.getAvailability("ABC5555", now, now.plusMinutes(61L));
+
+        assertEquals("ABC5555", carAvailability.getCar().getNumberPlate());
+        assertEquals(61L, carAvailability.getPricePerHour());
+    }
 }

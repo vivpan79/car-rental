@@ -67,7 +67,7 @@ class AvailabilityRepositoryTest {
 
         List<Availability> availabilities =
             availabilityRepository
-                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-222", bookingStart,
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqualPricePerHourLessThanEqual("ABC-222", bookingStart,
                     bookingEnd, Long.MAX_VALUE);
         assertFalse(availabilities.isEmpty());
         assertEquals("ABC-222", availabilities.get(0).getCar().getNumberPlate());
@@ -92,7 +92,7 @@ class AvailabilityRepositoryTest {
 
         List<Availability> availabilities =
             availabilityRepository
-                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-333", bookingStart,
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqualPricePerHourLessThanEqual("ABC-333", bookingStart,
                     bookingEnd, Long.MAX_VALUE);
 
         assertFalse(availabilities.isEmpty());
@@ -117,7 +117,7 @@ class AvailabilityRepositoryTest {
 
         List<Availability> availabilities =
             availabilityRepository
-                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-444", bookingStart,
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqualPricePerHourLessThanEqual("ABC-444", bookingStart,
                     bookingEnd, Long.MAX_VALUE);
 
         assertTrue(availabilities.isEmpty());
@@ -141,7 +141,7 @@ class AvailabilityRepositoryTest {
 
         List<Availability> availabilities =
             availabilityRepository
-                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual("ABC-555", bookingStart,
+                .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqualPricePerHourLessThanEqual("ABC-555", bookingStart,
                     bookingEnd, Long.MAX_VALUE);
 
         assertTrue(availabilities.isEmpty());

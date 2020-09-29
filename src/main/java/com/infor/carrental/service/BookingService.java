@@ -11,6 +11,7 @@ import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.BookingRepository;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -77,11 +78,17 @@ public class BookingService {
 
     public List<Car> findBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
         List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
+        if (null == bookings || bookings.isEmpty()) {
+            return Collections.emptyList();
+        }
         return bookings.stream().map(Booking::getCar).collect(Collectors.toList());
     }
 
     public Long findBookedHours(LocalDateTime fromDate, LocalDateTime toDate) {
         List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
+        if (null == bookings || bookings.isEmpty()) {
+            return 0L;
+        }
         return bookings.stream().map(x -> from(x.getFromDate()).until(x.getToDate(), ChronoUnit.HOURS))
             .mapToLong(Long::longValue).sum();
     }
@@ -93,11 +100,14 @@ public class BookingService {
     }
 
     public Long paymentFromBookedCars(LocalDateTime fromDate, LocalDateTime toDate) {
-        List<Car> carsBooked = findBookedCars(fromDate, toDate);
-
-        return carsBooked.stream().map(x ->
+        List<Booking> bookings = bookingRepository.findByFromDateGreaterThanOrToDateLessThan(fromDate, toDate);
+        if (null == bookings || bookings.isEmpty()) {
+            return 0L;
+        }
+        return bookings.stream().map(x ->
             {
-                Availability availability = availabilityService.getAvailability(x.getNumberPlate(), fromDate, toDate);
+                Availability availability = availabilityService
+                    .getAvailability(x.getCar().getNumberPlate(), x.getFromDate(), x.getFromDate());
                 long hoursBooked = from(availability.getFromDate()).until(availability.getToDate(), ChronoUnit.HOURS);
                 return (availability.getPricePerHour() * hoursBooked);
             }

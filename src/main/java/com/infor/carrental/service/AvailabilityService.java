@@ -2,11 +2,13 @@ package com.infor.carrental.service;
 
 import static java.lang.String.format;
 
+import com.infor.carrental.exception.NoAvailabilityException;
 import com.infor.carrental.exception.NoRegisteredCarException;
 import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.AvailabilityRepository;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.transaction.Transactional;
@@ -29,7 +31,7 @@ public class AvailabilityService {
     public Boolean isAvailable(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate,
         Long maxPricePerHour) {
         List<Availability> availabilities = availabilityRepository
-            .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual(carNumberPlate, fromDate, toDate,
+            .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqualPricePerHourLessThanEqual(carNumberPlate, fromDate, toDate,
                 maxPricePerHour);
         logger
             .info("Availability of {} fromDate: {} toDate: {} at maxPricePerHour: {}", carNumberPlate, fromDate, toDate,
@@ -56,6 +58,9 @@ public class AvailabilityService {
         if (null == savedCar) {
             throw new NoRegisteredCarException(format("Car with numberPlate %s does not exist", numberPlate));
         }
+        if(null == pricePerHour){
+            throw new IllegalArgumentException("Booking rate needs to be specified to register availability!");
+        }
         Availability availability = new Availability();
         availability.setFromDate(fromDate);
         availability.setToDate(toDate);
@@ -76,14 +81,21 @@ public class AvailabilityService {
         List<Availability> availabilityList = availabilityRepository
             .findCarByFromDateLessThanEqualAndToDateGreaterThanEqualAndLessThanEqualPricePerHour(fromDate, toDate,
                 maxPricePerHour);
+        if (null == availabilityList || availabilityList.isEmpty()) {
+            return Collections.emptyList();
+        }
         return availabilityList.stream().map(Availability::getCar).collect(Collectors.toList());
     }
 
     public Availability getAvailability(String carNumberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
         List<Availability> availabilities = availabilityRepository
-            .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqual(carNumberPlate, fromDate, toDate,
+            .findByCarNumberPlateFromDateLessThanEqualAndToDateGreaterThanEqualPricePerHourLessThanEqual(carNumberPlate, fromDate, toDate,
                 Long.MAX_VALUE);
         logger.info("get Availability of {} fromDate: {} toDate: {}", carNumberPlate, fromDate, toDate);
+        if (null == availabilities || availabilities.isEmpty()) {
+            throw new NoAvailabilityException(
+                format("No Availability of %s fromDate: %s toDate: %s", carNumberPlate, fromDate, toDate));
+        }
         return availabilities.get(0);
     }
 }
