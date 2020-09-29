@@ -1,6 +1,7 @@
 package com.infor.carrental.controller;
 
 import com.infor.carrental.controller.model.RestCar;
+import com.infor.carrental.controller.model.RestCars;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.persistence.repository.CarRepository;
 import io.swagger.annotations.ApiOperation;
@@ -25,10 +26,11 @@ public class CarController {
     @ApiOperation(
         value = "Get all registered Cars information.",
         notes = "Get all registered Cars information.",
-        response = RestCar.class, responseContainer = "List")
-    public List<RestCar> getAll() {
+        response = RestCars.class)
+    public RestCars getAll() {
         List<Car> cars = carRepository.findAll();
-        return cars.stream().map(RestCar::new).collect(Collectors.toList());
+        List<RestCar> restCars = cars.stream().map(RestCar::new).collect(Collectors.toList());
+        return restCars.isEmpty() ? new RestCars() : new RestCars(restCars);
     }
 
     @PostMapping("/register")

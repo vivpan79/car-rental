@@ -3,7 +3,9 @@ package com.infor.carrental.controller;
 import static com.infor.carrental.controller.model.Constants.DATE_TIME;
 
 import com.infor.carrental.controller.model.RestBooking;
+import com.infor.carrental.controller.model.RestBookings;
 import com.infor.carrental.controller.model.RestCar;
+import com.infor.carrental.controller.model.RestCars;
 import com.infor.carrental.persistence.entity.Booking;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.service.BookingService;
@@ -35,24 +37,26 @@ public class BookingController {
     @ApiOperation(
         value = "Get all Car bookings.",
         notes = "Get all Car bookings.",
-        response = RestBooking.class, responseContainer = "List")
-    public List<RestBooking> getAll() {
+        response = RestBookings.class)
+    public RestBookings getAll() {
         List<Booking> bookings = bookingService.findAll();
-        return bookings.stream().map(RestBooking::new).collect(Collectors.toList());
+        List<RestBooking> restBookings = bookings.stream().map(RestBooking::new).collect(Collectors.toList());
+        return restBookings.isEmpty() ? new RestBookings() : new RestBookings(restBookings);
     }
 
     @GetMapping(value = "/car/{numberPlate}")
     @ApiOperation(
         value = "Get all bookings for a car.",
         notes = "Get all bookings for a car.",
-        response = RestBooking.class, responseContainer = "List")
-    public List<RestBooking> getBookings(
+        response = RestBookings.class)
+    public RestBookings getBookings(
         @ApiParam(value = "Car numberPlate")
         @PathVariable(name = "numberPlate") String numberPlate
     ) {
         LOGGER.info("get booking for car : {}", numberPlate);
         List<Booking> bookings = bookingService.findBookings(numberPlate);
-        return bookings.stream().map(RestBooking::new).collect(Collectors.toList());
+        List<RestBooking> restBookings = bookings.stream().map(RestBooking::new).collect(Collectors.toList());
+        return restBookings.isEmpty() ? new RestBookings() : new RestBookings(restBookings);
     }
 
     @GetMapping(value = "/car/{numberPlate}/check/from/{fromDate}/to/{toDate}")
@@ -87,7 +91,7 @@ public class BookingController {
         @ApiParam(value = "Customer username")
         @PathVariable(name = "userName") String userName
     ) {
-        LOGGER.info("Register booking of {} fromDate: {} toDate: {} by {}", numberPlate, fromDate, toDate);
+        LOGGER.info("Register booking of {} fromDate: {} toDate: {} by {}", numberPlate, fromDate, toDate, userName);
         Booking booking = bookingService.registerBooking(numberPlate, fromDate, toDate, userName);
         return new RestBooking(booking);
     }
@@ -96,8 +100,8 @@ public class BookingController {
     @ApiOperation(
         value = "All booked cars between dates.",
         notes = "All booked cars between dates.",
-        response = RestCar.class, responseContainer = "List")
-    public List<RestCar> findBookedCars(
+        response = RestCars.class)
+    public RestCars findBookedCars(
         @ApiParam(value = "Car booking start date.")
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime fromDate,
         @ApiParam(value = "Car booking end date.")
@@ -105,7 +109,8 @@ public class BookingController {
     ) {
         LOGGER.info("find Booked Cars fromDate: {} toDate: {} ", fromDate, toDate);
         List<Car> bookedCars = bookingService.findBookedCars(fromDate, toDate);
-        return bookedCars.stream().map(RestCar::new).collect(Collectors.toList());
+        List<RestCar> restCars = bookedCars.stream().map(RestCar::new).collect(Collectors.toList());
+        return restCars.isEmpty() ? new RestCars() : new RestCars(restCars);
     }
 
     @GetMapping(value = "/frequency/from/{fromDate}/to/{toDate}")

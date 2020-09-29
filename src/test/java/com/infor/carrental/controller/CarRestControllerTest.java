@@ -44,8 +44,8 @@ class CarRestControllerTest {
         mvc.perform(get("/car")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].numberPlate", is("ABC-123")));
+            .andExpect(jsonPath("$.restCars", hasSize(1)))
+            .andExpect(jsonPath("$.restCars[0].numberPlate", is("ABC-123")));
     }
 
     @Test

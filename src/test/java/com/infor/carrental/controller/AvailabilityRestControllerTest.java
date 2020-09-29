@@ -57,8 +57,8 @@ class AvailabilityRestControllerTest {
         mvc.perform(get("/availability/car/ABC123")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].car.numberPlate", is("ABC666")))
+            .andExpect(jsonPath("$.restAvailabilityList", hasSize(1)))
+            .andExpect(jsonPath("$.restAvailabilityList[0].car.numberPlate", is("ABC666")))
         ;
     }
 
@@ -119,7 +119,7 @@ class AvailabilityRestControllerTest {
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].numberPlate", is("ABC123")))
+            .andExpect(jsonPath("$.restCars[0].numberPlate", is("ABC123")))
         ;
     }
 }

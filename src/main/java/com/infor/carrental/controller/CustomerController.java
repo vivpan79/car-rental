@@ -1,6 +1,7 @@
 package com.infor.carrental.controller;
 
 import com.infor.carrental.controller.model.RestCustomer;
+import com.infor.carrental.controller.model.RestCustomers;
 import com.infor.carrental.persistence.entity.Customer;
 import com.infor.carrental.service.CustomerService;
 import io.swagger.annotations.ApiOperation;
@@ -25,10 +26,11 @@ public class CustomerController {
     @ApiOperation(
         value = "Get all Customers information.",
         notes = "Get all Customers information.",
-        response = RestCustomer.class, responseContainer = "List")
-    public List<RestCustomer> getAll() {
+        response = RestCustomers.class)
+    public RestCustomers getAll() {
         List<Customer> customers = customerService.findAll();
-        return customers.stream().map(RestCustomer::new).collect(Collectors.toList());
+        List<RestCustomer> restCustomers = customers.stream().map(RestCustomer::new).collect(Collectors.toList());
+        return restCustomers.isEmpty() ? new RestCustomers() : new RestCustomers(restCustomers);
     }
 
     @PostMapping(value = "register")

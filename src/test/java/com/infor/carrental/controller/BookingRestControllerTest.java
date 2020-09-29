@@ -56,9 +56,9 @@ class BookingRestControllerTest {
         mvc.perform(get("/booking/car/ABC123")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].fromDate", is(formattedDate)))
-            .andExpect(jsonPath("$[0].toDate", is(formattedDate)))
+            .andExpect(jsonPath("$.restBookings", hasSize(1)))
+            .andExpect(jsonPath("$.restBookings[0].fromDate", is(formattedDate)))
+            .andExpect(jsonPath("$.restBookings[0].toDate", is(formattedDate)))
         ;
     }
 
@@ -112,7 +112,7 @@ class BookingRestControllerTest {
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$[0].numberPlate", is("ABC123")))
+            .andExpect(jsonPath("$.restCars[0].numberPlate", is("ABC123")))
         ;
     }
 

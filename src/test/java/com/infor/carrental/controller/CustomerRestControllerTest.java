@@ -45,8 +45,8 @@ class CustomerRestControllerTest {
         mvc.perform(get("/customer")
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$", hasSize(1)))
-            .andExpect(jsonPath("$[0].userName", is("NewUser")));
+            .andExpect(jsonPath("$.restCustomers", hasSize(1)))
+            .andExpect(jsonPath("$.restCustomers[0].userName", is("NewUser")));
     }
 
     @Test

@@ -2,8 +2,10 @@ package com.infor.carrental.controller;
 
 import static com.infor.carrental.controller.model.Constants.DATE_TIME;
 
+import com.infor.carrental.controller.model.RestAvailabilities;
 import com.infor.carrental.controller.model.RestAvailability;
 import com.infor.carrental.controller.model.RestCar;
+import com.infor.carrental.controller.model.RestCars;
 import com.infor.carrental.persistence.entity.Availability;
 import com.infor.carrental.persistence.entity.Car;
 import com.infor.carrental.service.AvailabilityService;
@@ -35,23 +37,28 @@ public class AvailabilityController {
     @ApiOperation(
         value = "Get all car availability information.",
         notes = "Get all car availability information.",
-        response = RestAvailability.class, responseContainer = "List")
-    public List<RestAvailability> getAll() {
+        response = RestAvailabilities.class)
+    public RestAvailabilities getAll() {
         List<Availability> availabilities = availabilityService.findAll();
-        return availabilities.stream().map(RestAvailability::new).collect(Collectors.toList());
+        List<RestAvailability> restAvailabilities = availabilities.stream().map(RestAvailability::new)
+            .collect(Collectors.toList());
+        return (restAvailabilities.isEmpty()) ? new RestAvailabilities() : new RestAvailabilities(restAvailabilities);
     }
 
     @GetMapping(value = "/car/{numberPlate}")
     @ApiOperation(
         value = "Get availability of a car.",
         notes = "Get availability of a car.",
-        response = RestAvailability.class, responseContainer = "List")
-    public List<Availability> getAvailability(
+        response = RestAvailabilities.class)
+    public RestAvailabilities getAvailability(
         @ApiParam(value = "Number plate of the car")
         @PathVariable(name = "numberPlate") String numberPlate
     ) {
         LOGGER.info("get availability for car : {}", numberPlate);
-        return availabilityService.getAvailability(numberPlate);
+        List<Availability> availabilities = availabilityService.getAvailability(numberPlate);
+        List<RestAvailability> restAvailabilities = availabilities.stream().map(RestAvailability::new)
+            .collect(Collectors.toList());
+        return (restAvailabilities.isEmpty()) ? new RestAvailabilities() : new RestAvailabilities(restAvailabilities);
     }
 
     @GetMapping(value = "/car/{numberPlate}/check/from/{fromDate}/to/{toDate}/maxrate/{maxPricePerHour}")
@@ -78,8 +85,8 @@ public class AvailabilityController {
     @ApiOperation(
         value = "All available cars between dates.",
         notes = "All available cars between dates.",
-        response = RestCar.class, responseContainer = "List")
-    public List<RestCar> findAvailableCars(
+        response = RestCars.class)
+    public RestCars findAvailableCars(
         @ApiParam(value = "Car availability start date.")
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime fromDate,
         @ApiParam(value = "Car availability end date.")
@@ -90,7 +97,8 @@ public class AvailabilityController {
             .info("Find available cars fromDate: {} toDate: {} at maxPricePerHour: {} ", fromDate,
                 toDate, maxPricePerHour);
         List<Car> availableCars = availabilityService.findAvailableCars(fromDate, toDate, maxPricePerHour);
-        return availableCars.stream().map(RestCar::new).collect(Collectors.toList());
+        List<RestCar> restCars = availableCars.stream().map(RestCar::new).collect(Collectors.toList());
+        return (restCars.isEmpty()) ? new RestCars() : new RestCars(restCars);
     }
 
     @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}/rate/{pricePerHour}")
