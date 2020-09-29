@@ -72,10 +72,10 @@ public class BookingController {
         return bookingService.isAvailable(numberPlate, fromDate, toDate);
     }
 
-    @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}")
+    @PostMapping(value = "/car/{numberPlate}/register/from/{fromDate}/to/{toDate}/for/{userName}")
     @ApiOperation(
-        value = "Register booking of car between dates with booking rate.",
-        notes = "Register booking of car between dates with booking rate.",
+        value = "Register booking of car between dates with booking rate for customer.",
+        notes = "Register booking of car between dates with booking rate for customer.",
         response = RestBooking.class)
     public RestBooking registerBooking(
         @ApiParam(value = "Number plate of the car")
@@ -83,10 +83,12 @@ public class BookingController {
         @ApiParam(value = "Car booking start date.")
         @PathVariable(name = "fromDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime fromDate,
         @ApiParam(value = "Car booking end date.")
-        @PathVariable(name = "toDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime toDate
+        @PathVariable(name = "toDate") @DateTimeFormat(pattern = DATE_TIME) LocalDateTime toDate,
+        @ApiParam(value = "Customer username")
+        @PathVariable(name = "userName") String userName
     ) {
-        LOGGER.info("Register booking of {} fromDate: {} toDate: {} ", numberPlate, fromDate, toDate);
-        Booking booking = bookingService.registerBooking(numberPlate, fromDate, toDate);
+        LOGGER.info("Register booking of {} fromDate: {} toDate: {} by {}", numberPlate, fromDate, toDate);
+        Booking booking = bookingService.registerBooking(numberPlate, fromDate, toDate, userName);
         return new RestBooking(booking);
     }
 

@@ -87,10 +87,10 @@ class BookingRestControllerTest {
         Car car = new Car();
         car.setNumberPlate("ABC123");
         booking.setCar(car);
-        given(bookingService.registerBooking(anyString(), any(LocalDateTime.class), any(LocalDateTime.class)))
+        given(bookingService.registerBooking(anyString(), any(LocalDateTime.class), any(LocalDateTime.class), anyString()))
             .willReturn(booking);
         mvc.perform(post(
-            "/booking/car/ABC123/register/from/" + formatter.format(date) + "/to/" + formatter.format(date)
+            "/booking/car/ABC123/register/from/" + formatter.format(date) + "/to/" + formatter.format(date) + "/for/TopGear"
         )
             .contentType(APPLICATION_JSON))
             .andExpect(status().isOk())

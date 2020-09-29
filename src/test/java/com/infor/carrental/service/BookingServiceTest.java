@@ -12,7 +12,9 @@ import com.infor.carrental.exception.AlreadyBookedException;
 import com.infor.carrental.exception.NoAvailabilityException;
 import com.infor.carrental.persistence.entity.Booking;
 import com.infor.carrental.persistence.entity.Car;
+import com.infor.carrental.persistence.entity.Customer;
 import com.infor.carrental.persistence.repository.CarRepository;
+import com.infor.carrental.persistence.repository.CustomerRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import javax.transaction.Transactional;
@@ -33,6 +35,8 @@ class BookingServiceTest {
     private BookingService bookingService;
     @Autowired
     private CarRepository carRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Test
     void givenBookingServiceWhenGetBookingForCarThenReturnJsonArray() {
@@ -44,6 +48,10 @@ class BookingServiceTest {
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
         booking.setCar(savedCar);
+        Customer customer = new Customer();
+        customer.setUserName("TopGear");
+        Customer savedCustomer = customerRepository.save(customer);
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
         List<Booking> bookingList = bookingService.findBookings("ABC123");
@@ -63,6 +71,10 @@ class BookingServiceTest {
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
         booking.setCar(savedCar);
+        Customer customer = new Customer();
+        customer.setUserName("TopGear");
+        Customer savedCustomer = customerRepository.save(customer);
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
         Boolean isAvailable = bookingService.isAvailable("ABC123", now, now.plusHours(1L));
@@ -81,6 +93,10 @@ class BookingServiceTest {
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
         booking.setCar(savedCar);
+        Customer customer = new Customer();
+        customer.setUserName("TopGear");
+        Customer savedCustomer = customerRepository.save(customer);
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
         Boolean isAvailable = bookingService
@@ -100,6 +116,10 @@ class BookingServiceTest {
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
         booking.setCar(savedCar);
+        Customer customer = new Customer();
+        customer.setUserName("TopGear");
+        Customer savedCustomer = customerRepository.save(customer);
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
         Boolean isAvailable = bookingService.isAvailable("ABC123", now.minusNanos(1L), now.plusHours(1L));
@@ -118,6 +138,10 @@ class BookingServiceTest {
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
         booking.setCar(savedCar);
+        Customer customer = new Customer();
+        customer.setUserName("TopGear");
+        Customer savedCustomer = customerRepository.save(customer);
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
         Boolean isAvailable = bookingService.isAvailable("ABC123", now, now.plusMinutes(61L));
@@ -135,16 +159,20 @@ class BookingServiceTest {
         car.setNumberPlate("ABC123");
         Car savedCar = carRepository.save(car);
         booking.setCar(savedCar);
+        Customer customer = new Customer();
+        customer.setUserName("TopGear");
+        Customer savedCustomer = customerRepository.save(customer);
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
-        assertThrows(AlreadyBookedException.class, () -> bookingService.registerBooking("ABC123", now, now));
+        assertThrows(AlreadyBookedException.class, () -> bookingService.registerBooking("ABC123", now, now, "TopGear"));
     }
 
     @Test
     void givenBookingServiceWhenRegisterBookingForUnavailableCarThenException() {
         LocalDateTime now = now();
 
-        assertThrows(NoAvailabilityException.class, () -> bookingService.registerBooking("ABC123", now, now));
+        assertThrows(NoAvailabilityException.class, () -> bookingService.registerBooking("ABC123", now, now, "userName"));
     }
 
     @Test
@@ -157,11 +185,16 @@ class BookingServiceTest {
         booking.setCar(savedCar);
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(3));
+        Customer customer = new Customer();
+        customer.setUserName("TopGear");
+        Customer savedCustomer = customerRepository.save(customer);
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
         booking = new Booking();
         booking.setCar(savedCar);
         booking.setFromDate(now.plusMonths(1));
         booking.setToDate(now.plusMonths(1).plusHours(7));
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
         Long bookedHours = bookingService.findBookedHours(now, now.plusMonths(2));
@@ -186,11 +219,16 @@ class BookingServiceTest {
         booking.setCar(savedCar);
         booking.setFromDate(now);
         booking.setToDate(now.plusHours(3));
+        Customer customer = new Customer();
+        customer.setUserName("TopGear");
+        Customer savedCustomer = customerRepository.save(customer);
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
         booking = new Booking();
         booking.setCar(savedCar);
         booking.setFromDate(now.plusMonths(1));
         booking.setToDate(now.plusMonths(1).plusHours(7));
+        booking.setCustomer(savedCustomer);
         bookingService.save(booking);
 
         Double carBookingFrequency = bookingService.getCarBookingFrequency(now, now.plusMonths(2));

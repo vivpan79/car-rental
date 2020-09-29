@@ -38,7 +38,7 @@ http://localhost:8080/customer/register
 
 To book a car from date/time, to date/time, user id, car id, use the following url
 
-http://localhost:8080/booking/car/{numberPlate}/register/find/from/{yyyy-MM-dd'T'HH:mm}/to/{yyyy-MM-dd'T'HH:mm}
+http://localhost:8080/booking/car/{numberPlate}/register/find/from/{yyyy-MM-dd'T'HH:mm}/to/{yyyy-MM-dd'T'HH:mm}/for/{userName}
 
 To check booked cars from date/time, to date/time go to sample url below
 

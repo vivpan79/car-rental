@@ -27,6 +27,10 @@ public class Booking {
     @Column(name = "available_till")
     private LocalDateTime toDate;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private Customer customer;
+
     public Long getId() {
         return id;
     }
@@ -53,5 +57,13 @@ public class Booking {
 
     public void setToDate(LocalDateTime toDate) {
         this.toDate = toDate;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
     }
 }

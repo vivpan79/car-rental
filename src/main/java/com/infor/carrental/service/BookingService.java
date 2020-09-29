@@ -29,6 +29,10 @@ public class BookingService {
     private BookingRepository bookingRepository;
     @Autowired
     private AvailabilityService availabilityService;
+    @Autowired
+    private CarService carService;
+    @Autowired
+    private CustomerService customerService;
 
     public List<Booking> findAll() {
         return bookingRepository.findAll();
@@ -55,7 +59,8 @@ public class BookingService {
     }
 
     @Transactional(TxType.REQUIRED)
-    public Booking registerBooking(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate) {
+    public Booking registerBooking(String numberPlate, LocalDateTime fromDate, LocalDateTime toDate,
+        String userName) {
         if (!isAvailable(numberPlate, fromDate, toDate)) {
             throw new AlreadyBookedException(format("Car with numberPlate %s already booked", numberPlate));
         }
@@ -65,6 +70,8 @@ public class BookingService {
         Booking entity = new Booking();
         entity.setFromDate(fromDate);
         entity.setToDate(toDate);
+        entity.setCar(carService.findByNumberPlate(numberPlate));
+        entity.setCustomer(customerService.findByUserName(userName));
         return bookingRepository.save(entity);
     }
 
