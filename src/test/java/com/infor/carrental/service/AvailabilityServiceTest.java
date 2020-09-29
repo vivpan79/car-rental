@@ -133,13 +133,13 @@ class AvailabilityServiceTest {
 
         LocalDateTime now = now();
         Car car = new Car();
-        car.setNumberPlate("ABC5555");
+        car.setNumberPlate("ABC6666");
         Car savedCar = carRepository.save(car);
-        availabilityService.registerAvailability("ABC5555", now, now.plusMinutes(61L), 61L);
+        availabilityService.registerAvailability("ABC6666", now, now.plusMinutes(61L), 61L);
 
-        Availability carAvailability = availabilityService.getAvailability("ABC5555", now, now.plusMinutes(61L));
+        Availability carAvailability = availabilityService.getAvailability("ABC6666", now, now.plusMinutes(61L));
 
-        assertEquals("ABC5555", carAvailability.getCar().getNumberPlate());
+        assertEquals("ABC6666", carAvailability.getCar().getNumberPlate());
         assertEquals(61L, carAvailability.getPricePerHour());
     }
 }

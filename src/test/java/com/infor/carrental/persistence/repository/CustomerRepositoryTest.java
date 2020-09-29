@@ -32,7 +32,7 @@ class CustomerRepositoryTest {
     @Test
     void givenCustomerRepositoryWhenSaveAndFindCustomerByUserNameThenExactMatch() {
         Customer entity = new Customer();
-        entity.setUserName("CustomerOne");
+        entity.setUserName("CustomerTwo");
         Customer savedCustomer = customerRepository.save(entity);
         Optional<Customer> retrievedCustomer = customerRepository.findByUserName(savedCustomer.getUserName());
         assertTrue(retrievedCustomer.isPresent());

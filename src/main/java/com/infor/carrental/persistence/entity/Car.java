@@ -14,7 +14,7 @@ public class Car {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @Column(name = "number_plate")
+    @Column(name = "number_plate", unique = true)
     private String numberPlate;
 
     public Car() {
